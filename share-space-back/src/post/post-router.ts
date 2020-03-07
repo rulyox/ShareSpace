@@ -13,10 +13,10 @@ request header
 token : string
 
 request body json
-{"text": string, "image": array}
+{text: string, image: array}
 
 response json
-{"auth": boolean, "result": boolean}
+{result: boolean}
 */
 router.post('/', async (request, response) => {
 
@@ -31,33 +31,30 @@ router.post('/', async (request, response) => {
         return;
     }
 
+    let result: {result: boolean};
     utility.print(`POST /post ${token}`);
 
-    const userData: any = await userController.checkToken(token);
+    const tokenResult: {auth: boolean, id?: number, email?: string, name?: string} = await userController.checkToken(token);
 
-    if(userData.auth !== true) {
-        response.json({
-            'auth': false
-        });
+    // auth check
+    if(!tokenResult.auth) {
+        response.writeHead(401);
+        response.end();
         return;
     }
 
-    const userId: number = userData.id;
+    const writeResult: boolean = await postController.writePost(tokenResult.id!, text);
 
-    let result;
-    const resultWrite: boolean = await postController.writePost(userId, text);
-
-    if(resultWrite) {
-        result = {
-            'auth': true,
-            'result': true
-        };
-    } else {
-        result = {
-            'auth': true,
-            'result': false
-        };
+    // write post failed
+    if(!writeResult) {
+        response.writeHead(500);
+        response.end();
+        return;
     }
+
+    result = {
+        'result': true
+    };
 
     response.json(result);
 

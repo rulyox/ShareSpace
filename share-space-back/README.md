@@ -34,7 +34,6 @@ Check login and create token.
 * Response JSON
 ```json
 {
-  "auth": "boolean", 
   "token": "string"
 }
 ```
@@ -52,7 +51,6 @@ token : string
 * Response JSON
 ```json
 {
-  "auth": "boolean",
   "id": "number",
   "email": "string",
   "name": "string"
@@ -93,7 +91,6 @@ id : number
 * Response JSON
 ```json
 {
-  "result": "boolean",
   "name": "string"
 }
 ```
@@ -122,7 +119,6 @@ token : string
 * Response JSON
 ```json
 {
-  "auth": "boolean", 
   "result": "boolean"
 }
 ```

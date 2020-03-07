@@ -1,4 +1,4 @@
-import mysqlConnector from '../mysql-connector';
+import mysqlManager from '../mysql-manager';
 import postSQL from './post-sql';
 import utility from '../utility';
 
@@ -7,7 +7,7 @@ const writePost = (user: number, text: string): Promise<boolean> => {
 
         try {
 
-            const postAddQuery: any = await mysqlConnector.executeDB(postSQL.addPost(user, text));
+            const postAddQuery: any = await mysqlManager.executeDB(postSQL.addPost(user, text));
             resolve(true);
 
         } catch(error) {

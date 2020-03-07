@@ -9,10 +9,10 @@ Check login and create token.
 POST /user/token
 
 request body json
-{"email": string, "pw": string}
+{email: string, pw: string}
 
 response json
-{"auth": boolean, "token": string}
+{token: string}
  */
 router.post('/token', async (request, response) => {
 
@@ -26,22 +26,23 @@ router.post('/token', async (request, response) => {
         return;
     }
 
+    let result: {token: string};
     utility.print(`POST /user/token ${email}`);
 
-    let result;
-    const resultLogin: boolean = await userController.checkLogin(email, pw);
+    const loginResult: boolean = await userController.checkLogin(email, pw);
 
-    if(resultLogin) {
-        const token: string = userController.createToken(email, pw);
-        result = {
-            'auth': true,
-            'token': token
-        };
-    } else {
-        result = {
-            'auth': false
-        };
+    // auth check
+    if(!loginResult) {
+        response.writeHead(401);
+        response.end();
+        return;
     }
+
+    const token: string = userController.createToken(email, pw);
+
+    result = {
+        token: token
+    };
 
     response.json(result);
 
@@ -55,7 +56,7 @@ request header
 token : string
 
 response json
-{"auth": boolean, "id": number, "email": string, "name": string}
+{id: number, email: string, name: string}
  */
 router.get('/', async (request, response) => {
 
@@ -68,9 +69,23 @@ router.get('/', async (request, response) => {
         return;
     }
 
+    let result: {id: number, email: string, name: string};
     utility.print(`GET /user ${token}`);
 
-    const result = await userController.checkToken(token);
+    const tokenResult: {auth: boolean, id?: number, email?: string, name?: string} = await userController.checkToken(token);
+
+    // auth check
+    if(!tokenResult.auth) {
+        response.writeHead(401);
+        response.end();
+        return;
+    }
+
+    result = {
+        id: tokenResult.id!,
+        email: tokenResult.email!,
+        name: tokenResult.name!
+    };
 
     response.json(result);
 
@@ -81,10 +96,10 @@ Sign up.
 POST /user
 
 request body json
-{"email": string, "pw": string, "name": string}
+{email: string, pw: string, name: string}
 
 response json
-{"result": boolean}
+{result: boolean}
  */
 router.post('/', async (request, response) => {
 
@@ -99,12 +114,13 @@ router.post('/', async (request, response) => {
         return;
     }
 
+    let result: {result: boolean};
     utility.print(`POST /user ${email}`);
 
-    const resultAddUser: boolean = await userController.createUser(email, pw, name);
+    const addUserResult: boolean = await userController.createUser(email, pw, name);
 
-    const result = {
-        'result': resultAddUser
+    result = {
+        result: addUserResult
     };
 
     response.json(result);
@@ -119,26 +135,36 @@ request param
 id : number
 
 response json
-{"result": boolean, "name": string}
+{name: string}
  */
 router.get('/data/:id', async (request, response) => {
 
-    try {
+    const id = Number(request.params?.id);
 
-        const id = parseInt(request.params.id);
-
-        utility.print(`GET /user/data ${id}`);
-
-        const result = await userController.getUserData(id);
-
-        response.json(result);
-
-    } catch(error) { // if parseInt fails
-
+    // type check
+    if(isNaN(id)) {
         response.writeHead(400);
         response.end();
-
+        return;
     }
+
+    let result: {name: string};
+    utility.print(`GET /user/data ${id}`);
+
+    const userDataResult: {result: boolean, name?: string} = await userController.getUserData(id);
+
+    // user exist check
+    if(!userDataResult.result) {
+        response.writeHead(404);
+        response.end();
+        return;
+    }
+
+    result = {
+        name: userDataResult.name!
+    };
+
+    response.json(result);
 
 });
 

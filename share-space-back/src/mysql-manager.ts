@@ -21,10 +21,10 @@ const endDB = (): void => {
 
 };
 
-const executeDB = (query: string): Promise<object[]> =>{
+const executeDB = (query: string): Promise<any> =>{
     return new Promise((resolve, reject) => {
 
-        dbConnection.query(query, (error: mysql.MysqlError, result: object[], fields: mysql.FieldInfo[]) => {
+        dbConnection.query(query, (error, result, fields) => {
             if(error) reject(error);
             else resolve(result);
         });

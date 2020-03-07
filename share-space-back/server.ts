@@ -1,11 +1,12 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import mysqlConnector from './module/mysql-connector';
-import api from './module/api';
-import utility from './module/utility';
+import mysqlManager from './src/mysql-manager';
+import api from './src/api';
+import utility from './src/utility';
 
-mysqlConnector.startDB();
+// database
+mysqlManager.startDB();
 
 const app = express();
 const port = 8080;

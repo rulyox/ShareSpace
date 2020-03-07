@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import mysqlConnector from '../mysql-connector';
+import mysqlManager from '../mysql-manager';
 import userSQL from './user-sql';
 import utility from '../utility';
 import aesConfig from '../../config/aes.json';
@@ -9,7 +9,7 @@ const checkLogin = (email: string, pw: string): Promise<boolean> => {
 
         try {
 
-            const loginQuery: object[] = await mysqlConnector.executeDB(userSQL.selectUser(email, pw));
+            const loginQuery = await mysqlManager.executeDB(userSQL.selectUser(email, pw));
 
             if(loginQuery.length > 0) resolve(true);
             else resolve(false);
@@ -51,56 +51,47 @@ const decryptAES = (cipherText: string): string => {
 
 const createToken = (email: string, pw: string): string => {
 
-    let credential: object = {
-        'email': email,
-        'pw': pw
+    const credential = {
+        email: email,
+        pw: pw
     };
 
     return encryptAES(JSON.stringify(credential));
 
 };
 
-const checkToken = (token: string): Promise<{ auth: boolean, id?: number, email?: string, name?: string }> => {
+const checkToken = (token: string): Promise<{auth: boolean, id?: number, email?: string, name?: string}> => {
     return new Promise(async (resolve) => {
 
-        const authFalseObj = {
-            auth: false,
-            id: undefined,
-            email: undefined,
-            name: undefined
+        const failResponse = {
+            auth: false
         };
 
         // get credential from token
-        let credential: any;
-
+        let credential;
         try {
-
             credential = JSON.parse(decryptAES(token));
-
         } catch(error) {
-
-            resolve(authFalseObj);
+            resolve(failResponse);
             return;
-
         }
 
         // type check
-        const email: any = credential?.email;
-        const pw: any = credential?.pw;
+        const email = credential?.email;
+        const pw = credential?.pw;
 
         if(typeof email !== 'string' || typeof pw !== 'string') {
-            resolve(authFalseObj);
+            resolve(failResponse);
             return;
         }
 
         // check login
-        const resultLogin = await checkLogin(email, pw);
-
-        if(resultLogin) {
+        const loginResult = await checkLogin(email, pw);
+        if(loginResult) {
 
             try {
 
-                const loginQuery: any = (await mysqlConnector.executeDB(userSQL.selectUser(email, pw)))[0];
+                const loginQuery= (await mysqlManager.executeDB(userSQL.selectUser(email, pw)))[0];
                 resolve({
                     auth: true,
                     id: loginQuery?.id,
@@ -111,11 +102,11 @@ const checkToken = (token: string): Promise<{ auth: boolean, id?: number, email?
             } catch(error) {
 
                 utility.print(error);
-                resolve(authFalseObj);
+                resolve(failResponse);
 
             }
 
-        } else resolve(authFalseObj);
+        } else resolve(failResponse);
 
     });
 };
@@ -128,7 +119,7 @@ const createUser = (email: string, pw: string, name: string): Promise<boolean> =
         try {
 
             // check if same email exists
-            const emailCheckQuery: object[] = await mysqlConnector.executeDB(userSQL.checkEmail(email));
+            const emailCheckQuery = await mysqlManager.executeDB(userSQL.checkEmail(email));
 
             if(emailCheckQuery?.length === 0) emailExists = false;
             else emailExists = true;
@@ -145,7 +136,7 @@ const createUser = (email: string, pw: string, name: string): Promise<boolean> =
 
             try {
 
-                const userAddQuery: any = await mysqlConnector.executeDB(userSQL.addUser(email, pw, name));
+                const userAddQuery = await mysqlManager.executeDB(userSQL.addUser(email, pw, name));
 
                 if(userAddQuery?.affectedRows === 1) resolve(true);
                 else resolve(false);
@@ -162,21 +153,20 @@ const createUser = (email: string, pw: string, name: string): Promise<boolean> =
     });
 };
 
-const getUserData = (id: number): Promise<{ result: boolean, name?: string }> => {
+const getUserData = (id: number): Promise<{result: boolean, name?: string}> => {
     return new Promise(async (resolve) => {
 
-        const getUserQuery: object[] = (await mysqlConnector.executeDB(userSQL.selectUserID(id)));
+        const getUserQuery = (await mysqlManager.executeDB(userSQL.selectUserID(id)));
 
         if(getUserQuery?.length === 0) { // if id does nto exist
 
             resolve({
-                result: false,
-                name: undefined
+                result: false
             });
 
         } else {
 
-            const userData: any = getUserQuery[0];
+            const userData = getUserQuery[0];
 
             resolve({
                 result: true,
