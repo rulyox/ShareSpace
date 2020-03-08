@@ -10,50 +10,37 @@
     import axios from 'axios';
     import config from './config';
 
-    function checkLocalToken() {
+    function checkToken() {
 
-        let router = this.$router;
+        const thisVue = this;
+        const router = thisVue.$router;
 
         if(router.currentRoute.path === '/login') return;
 
-        let token = localStorage.getItem('token');
-
-        if(token === undefined) router.push('/login');
+        const token = localStorage.getItem('token');
+        if(token === undefined) router.push('/login'); // no token
         else {
-
             axios.get(config.server + '/user', {headers: {'token': token}})
                 .then(function(response) {
-
-                    if(response.data.auth === undefined || response.data.auth === false) router.push('/login');
-                    else console.log('App Token Check Success');
-
+                    if(response.status === 200) console.log('App Token Check Success');
+                    else { // error
+                        console.log('App Token Check Error');
+                        localStorage.removeItem('token');
+                        router.push('/login');
+                    }
+                })
+                .catch(() => { // wrong token
+                    localStorage.removeItem('token');
+                    router.push('/login')
                 });
-
         }
 
     }
 
     export default {
         methods: {
-            checkLocalToken
-        },
-
-        created() {
-            this.checkLocalToken();
-        },
-
-        // ! check in each route?
-        // watch: {
-        //
-        //     // eslint-disable-next-line no-unused-vars
-        //     $route(to, from) {
-        //
-        //         this.checkLocalToken();
-        //
-        //     }
-        //
-        // }
-
+            checkToken
+        }
     };
 </script>
 

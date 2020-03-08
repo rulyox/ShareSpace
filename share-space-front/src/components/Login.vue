@@ -32,19 +32,18 @@
         return new Promise(async (resolve) => {
 
             axios.post(config.server + '/user/token', {
-                'email': email,
-                'pw': pw
+                email: email,
+                pw: pw
             }).then((response) => {
-
-                if(response.data.auth === undefined || response.data.auth === false) resolve(false);
-                else if(response.data.auth) {
-
+                if(response.status === 200) {
+                    console.log('Login Get Token Success');
                     localStorage.setItem('token', response.data.token);
                     resolve(true);
-
+                } else { // error
+                    console.log('Login Get Token Error');
+                    resolve(false);
                 }
-
-            });
+            }).catch(() => resolve(false)); // wrong credential
 
         });
     }
@@ -58,21 +57,12 @@
 
         const resultToken = await this.getToken(this.inputEmail, this.inputPassword);
 
-        if(resultToken){
-
-            console.log('Login Success');
-
-            await this.$router.push('/');
-
-        }
+        if(resultToken) await this.$router.push('/');
         else {
-
-            console.log('Login Failed');
             alert('Login failed. Check email or password!');
 
             this.inputEmail = "";
             this.inputPassword = "";
-
         }
 
     }

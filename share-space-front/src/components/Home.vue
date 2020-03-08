@@ -18,29 +18,29 @@
     // check token and get user info
     function getUserInfo() {
 
+        const thisVue = this;
+        const router = thisVue.$router;
+
         const token = localStorage.getItem('token');
-
-        if(token === undefined) this.$router.push('/login'); // if token does not exist
+        if(token === undefined) router.push('/login'); // no token
         else {
-
-            const thisVue = this;
-
             axios.get(config.server + '/user', {headers: {'token': token}})
-                .then((response) => {
-
-                    if(response.data.auth === undefined || response.data.auth === false) thisVue.$router.push('/login'); // if token is wrong
-                    else if(response.data.auth) {
-
+                .then(function(response) {
+                    if(response.status === 200) {
+                        console.log('Home Get User Success');
                         thisVue.userId = response.data.id;
                         thisVue.userEmail = response.data.email;
                         thisVue.userName = response.data.name;
-
-                        console.log('Home User Info Success');
-
+                    } else { // error
+                        console.log('Home Get User Error');
+                        localStorage.removeItem('token');
+                        router.push('/login');
                     }
-
+                })
+                .catch(() => { // wrong token
+                    localStorage.removeItem('token');
+                    router.push('/login')
                 });
-
         }
 
     }

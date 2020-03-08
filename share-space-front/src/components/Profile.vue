@@ -31,29 +31,29 @@
     // check token and get user info
     function getUserInfo() {
 
+        const thisVue = this;
+        const router = thisVue.$router;
+
         const token = localStorage.getItem('token');
-
-        if(token === undefined) this.$router.push('/login'); // if token does not exist
+        if(token === undefined) router.push('/login'); // no token
         else {
-
-            const thisVue = this;
-
             axios.get(config.server + '/user', {headers: {'token': token}})
-                .then((response) => {
-
-                    if(response.data.auth === undefined || response.data.auth === false) thisVue.$router.push('/login'); // if token is wrong
-                    else if (response.data.auth) {
-
+                .then(function(response) {
+                    if(response.status === 200) {
+                        console.log('Profile Get User Success');
                         thisVue.userId = response.data.id;
                         thisVue.userEmail = response.data.email;
                         thisVue.userName = response.data.name;
-
-                        console.log('Profile User Info Success');
-
+                    } else { // error
+                        console.log('Profile Get User Error');
+                        localStorage.removeItem('token');
+                        router.push('/login');
                     }
-
+                })
+                .catch(() => { // wrong token
+                    localStorage.removeItem('token');
+                    router.push('/login')
                 });
-
         }
 
     }
@@ -61,24 +61,21 @@
     function getProfileInfo() {
 
         const thisVue = this;
+        const router = thisVue.$router;
 
         axios.get(config.server + '/user/data/' + this.profileId)
             .then((response) => {
-
-                if(response.data.result === undefined || response.data.result === false) { // no user found
-
-                    alert('No user found!');
-
-                    thisVue.$router.push('/');
-
-                } else if (response.data.result) {
-
+                if(response.status === 200) {
                     thisVue.profileName = response.data.name;
-
                     console.log('Profile Target Info Success');
-
+                } else { // wrong user
+                    alert('No user found!');
+                    router.push('/');
                 }
-
+            })
+            .catch(() => { // wrong user
+                alert('No user found!');
+                router.push('/');
             });
 
     }
