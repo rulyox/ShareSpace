@@ -12,8 +12,9 @@ POST /post
 request header
 token : string
 
-request body json
-{text: string, image: array}
+request form
+text : string
+files
 
 response json
 {result: boolean}
@@ -21,11 +22,10 @@ response json
 router.post('/', async (request, response) => {
 
     const token = request.headers?.token;
-    const text = request.body?.text;
-    const image = request.body?.image;
+    const formData: {text: string, images: object[]} = await postController.parseFormData(request);
 
     // type check
-    if(typeof token !== 'string' || typeof text !== 'string') {
+    if(typeof token !== 'string') {
         response.writeHead(400);
         response.end();
         return;
@@ -43,7 +43,8 @@ router.post('/', async (request, response) => {
         return;
     }
 
-    const writeResult: boolean = await postController.writePost(tokenResult.id!, text);
+    const user = tokenResult.id!;
+    const writeResult: boolean = await postController.writePost(user, formData.text, formData.images);
 
     // write post failed
     if(!writeResult) {

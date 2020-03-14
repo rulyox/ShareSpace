@@ -108,12 +108,10 @@ Write new post.
 token : string
 ```
 
-* Request Body JSON
-```json
-{
-  "text": "string",
-  "image": "array"
-}
+* Request Form
+```
+text : string
+files
 ```
 
 * Response JSON

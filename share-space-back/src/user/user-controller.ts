@@ -91,7 +91,7 @@ const checkToken = (token: string): Promise<{auth: boolean, id?: number, email?:
 
             try {
 
-                const loginQuery= (await mysqlManager.executeDB(userSQL.selectUser(email, pw)))[0];
+                const loginQuery = (await mysqlManager.executeDB(userSQL.selectUser(email, pw)))[0];
                 resolve({
                     auth: true,
                     id: loginQuery?.id,
