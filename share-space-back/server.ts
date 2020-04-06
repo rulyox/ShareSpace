@@ -1,6 +1,5 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import cors from 'cors';
 import mysqlManager from './src/mysql-manager';
 import api from './src/api';
 import utility from './src/utility';
@@ -13,7 +12,6 @@ const port = 8080;
 
 // middleware
 app.use(bodyParser.json());
-app.use(cors());
 
 // route
 app.use('/api', api);
