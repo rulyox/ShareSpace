@@ -19,7 +19,10 @@
 
         </div>
 
-        <a href="#" class="float">+</a>
+        <a class="float" v-on:click="showModal = true">+</a>
+
+        <WriteModal v-if="showModal" v-on:close="showModal = false" />
+
     </div>
 </template>
 
@@ -27,6 +30,7 @@
     import Post from './Post';
     import axios from "axios";
     import config from "../config";
+    import WriteModal from "./WriteModal";
 
     // check token and get user info
     function getUserInfo() {
@@ -90,7 +94,8 @@
                 userName: "",
                 profileId: this.propsProfileId,
                 profileName: "",
-                items: ['1', '2', '3']
+                items: ['1', '2', '3'],
+                showModal: false
             };
         },
 
@@ -109,7 +114,8 @@
         },
 
         components: {
-            'Post': Post
+            Post,
+            WriteModal
         }
     };
 </script>
