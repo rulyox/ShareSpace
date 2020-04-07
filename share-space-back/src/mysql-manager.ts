@@ -9,19 +9,19 @@ const dbConnection = mysql.createConnection({
     database: dbConfig.name
 });
 
-const startDB = (): void => {
+const start = (): void => {
 
     dbConnection.connect();
 
 };
 
-const endDB = (): void => {
+const end = (): void => {
 
     dbConnection.end();
 
 };
 
-const executeDB = (query: string): Promise<any> =>{
+const execute = (query: string): Promise<any> =>{
     return new Promise((resolve, reject) => {
 
         dbConnection.query(query, (error, result, fields) => {
@@ -33,7 +33,7 @@ const executeDB = (query: string): Promise<any> =>{
 };
 
 export default {
-    startDB,
-    endDB,
-    executeDB
+    start,
+    end,
+    execute
 };

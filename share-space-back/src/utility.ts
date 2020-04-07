@@ -1,3 +1,5 @@
+import express from 'express';
+
 const getTime = (): string => {
 
     const time = new Date();
@@ -21,7 +23,16 @@ const print = (log: string): void => {
 
 };
 
+const errorHandler = (error: Error, request: express.Request, response: express.Response, next: express.NextFunction) => {
+
+    print(`Error\n${error}`);
+
+    response.status(500).end();
+
+};
+
 export default {
     getTime,
-    print
+    print,
+    errorHandler
 };

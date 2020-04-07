@@ -9,30 +9,38 @@ import dataConfig from '../../config/data.json';
 const parseFormData = (request: express.Request): Promise<{text: string, images: object[]}> => {
     return new Promise(async (resolve, reject) => {
 
-        const formParser = new formidable.IncomingForm();
-        formParser.parse(request, function (err, fields, files) {
+        try {
 
-            if(err) reject(err);
+            const formParser = new formidable.IncomingForm();
+            formParser.parse(request, function (error, fields, files) {
 
-            if(typeof fields.text !== 'string') return;
+                if(error) reject(error);
 
-            resolve({
-               text: fields.text,
-               images: Object.values(files)
+                if(typeof fields.text !== 'string') return;
+
+                resolve({
+                    text: fields.text,
+                    images: Object.values(files)
+                });
+
             });
 
-        });
+        } catch(error) {
+
+            reject(error);
+
+        }
 
     });
 };
 
 const writePost = (user: number, text: string, imageList: any[]): Promise<boolean> => {
-    return new Promise(async (resolve) => {
+    return new Promise(async (resolve, reject) => {
 
         try {
 
             // add post to db
-            const postAddQuery = await mysqlManager.executeDB(postSQL.addPost(user, text));
+            const postAddQuery = await mysqlManager.execute(postSQL.add(user, text));
             const postId: number = postAddQuery.insertId;
 
             for(const [index, image] of Object.entries(imageList)) {
@@ -44,7 +52,7 @@ const writePost = (user: number, text: string, imageList: any[]): Promise<boolea
                 await saveImage(originalPath, dataConfig.imagePath + imageName);
 
                 // add image to db
-                await mysqlManager.executeDB(postSQL.addPostImage(postId, imageName));
+                await mysqlManager.execute(postSQL.addImage(postId, imageName));
 
             }
 
@@ -54,8 +62,7 @@ const writePost = (user: number, text: string, imageList: any[]): Promise<boolea
 
         } catch(error) {
 
-            utility.print(error);
-            resolve(false);
+            reject(error);
 
         }
 
@@ -65,12 +72,20 @@ const writePost = (user: number, text: string, imageList: any[]): Promise<boolea
 const saveImage = (sourceImg: string, targetImg: string): Promise<any> => {
     return new Promise(async (resolve, reject) => {
 
-        await sharp(sourceImg)
-            .resize(512, 512)
-            .toFile(targetImg, (error, info) => {
-                if(error) reject(error);
-                resolve(info);
-            });
+        try {
+
+            await sharp(sourceImg)
+                .resize(512, 512)
+                .toFile(targetImg, (error, info) => {
+                    if(error) reject(error);
+                    resolve(info);
+                });
+
+        } catch(error) {
+
+            reject(error);
+
+        }
 
     });
 };

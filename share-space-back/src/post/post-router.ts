@@ -6,20 +6,21 @@ import utility from "../utility";
 const router = express.Router();
 
 /*
-Write new post.
 POST /post
 
-request header
+Write new post.
+
+Request Header
 token : string
 
-request form
+Request Form
 text : string
 files
 
-response json
+Response JSON
 {result: boolean}
 */
-router.post('/', async (request, response) => {
+router.post('/', async (request, response, next) => {
 
     const token = request.headers?.token;
     const formData: {text: string, images: object[]} = await postController.parseFormData(request);
@@ -31,33 +32,37 @@ router.post('/', async (request, response) => {
         return;
     }
 
-    let result: {result: boolean};
     utility.print(`POST /post ${token}`);
 
-    const tokenResult: {auth: boolean, id?: number, email?: string, name?: string} = await userController.checkToken(token);
+    try {
 
-    // auth check
-    if(!tokenResult.auth) {
-        response.writeHead(401);
-        response.end();
-        return;
+        const tokenResult: {auth: boolean, id?: number, email?: string, name?: string} = await userController.checkToken(token);
+
+        // auth check
+        if(!tokenResult.auth) {
+            response.writeHead(401);
+            response.end();
+            return;
+        }
+
+        const user = tokenResult.id!;
+        const writeResult: boolean = await postController.writePost(user, formData.text, formData.images);
+
+        // write post failed
+        if(!writeResult) {
+            response.writeHead(500);
+            response.end();
+            return;
+        }
+
+        response.json({ 'result': true });
+
+    } catch(error) {
+
+        // error handler
+        next(new Error(`POST /post\n${error}`));
+
     }
-
-    const user = tokenResult.id!;
-    const writeResult: boolean = await postController.writePost(user, formData.text, formData.images);
-
-    // write post failed
-    if(!writeResult) {
-        response.writeHead(500);
-        response.end();
-        return;
-    }
-
-    result = {
-        'result': true
-    };
-
-    response.json(result);
 
 });
 
