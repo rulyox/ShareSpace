@@ -3,7 +3,7 @@
 
         <nav class="navbar navbar-expand-lg navbar-dark">
 
-            <a class="navbar-brand mr-5" href="/" style="margin-left: 30px;">SNS</a>
+            <a class="navbar-brand mr-5" href="/" style="margin-left: 30px;">ShareSpace</a>
 
             <!-- search -->
             <form class="form-inline my-2 my-lg-0" action="/search">
