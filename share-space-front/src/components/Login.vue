@@ -3,7 +3,7 @@
 
         <div class="login-card">
 
-            <p class="sns-title">SNS</p>
+            <p class="sns-title">ShareSpace</p>
 
             <form class="login-form">
                 <label>
@@ -29,7 +29,7 @@
     import config from "../config";
 
     function getToken(email, pw) {
-        return new Promise(async (resolve) => {
+        return new Promise((resolve) => {
 
             axios.post(config.server + '/user/token', {
                 email: email,

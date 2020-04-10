@@ -1,47 +1,18 @@
 <template>
     <div class="header-container">
 
-        <nav class="navbar navbar-expand-lg navbar-dark">
+        <a id="header-title">ShareSpace</a>
 
-            <a class="navbar-brand mr-5" href="/" style="margin-left: 30px;">ShareSpace</a>
+        <el-dropdown id="header-profile" trigger="click">
 
-            <!-- search -->
-            <form class="form-inline my-2 my-lg-0" action="/search">
-                <input class="form-control mr-sm-2" type="search" name="query" placeholder="Type here" size="33" aria-label="Search">
-                <button class="btn btn-success" type="submit">Search</button>
-            </form>
+            <img class="el-dropdown-link" width="50px" height="50px" style="background-color: mediumpurple; border-radius: 25px;"/>
 
-            <!-- if collapse -->
-            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navb">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item icon="el-icon-plus" v-bind:href="'/#/profile/' + userId">My Profile</el-dropdown-item>
+                <el-dropdown-item icon="el-icon-circle-plus">Action 2</el-dropdown-item>
+            </el-dropdown-menu>
 
-            <!-- my profile -->
-            <div class="collapse navbar-collapse" id="navb">
-
-                <div class="navbar-nav mr-auto"> </div>
-
-                <img width="50px" height="50px" style="background-color: mediumpurple; border-radius: 25px;"/>
-
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-
-                        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown" style="color: #FAFAFA;">
-                            {{ userName }}
-                        </a>
-
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" v-bind:href="'/#/profile/' + userId">My Profile</a>
-                            <a class="dropdown-item" href="/#/setting">Settings</a>
-                            <a class="dropdown-item" href="/#/logout">Logout</a>
-                        </div>
-
-                    </li>
-                </ul>
-
-            </div>
-
-        </nav>
+        </el-dropdown>
 
     </div>
 </template>
@@ -53,12 +24,26 @@
 </script>
 
 <style scoped>
-    .navbar {
+    .header-container {
+        width: 100%;
+        height: 60px;
         background-color: #253B80;
+        color: #FAFAFA;
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
     }
 
-    .navbar-brand {
-        color: #FAFAFA;
-        font-weight: bold;
+    #header-title {
+        font-size: 20px;
+        font-weight: 700;
+        margin-left: 30px;
+    }
+
+    #header-profile {
+        font-size: 15px;
+        margin-left: auto;
+        margin-right: 30px;
     }
 </style>
