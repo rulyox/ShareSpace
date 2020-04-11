@@ -132,6 +132,7 @@
         overflow: hidden;
         padding: 30px;
         background-color: #E9E9E9;
+        text-align: center;
     }
 
     .info-image {
@@ -145,7 +146,6 @@
 
     .post-container {
         flex: 1;
-
         overflow: auto;
     }
 

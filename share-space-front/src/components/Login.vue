@@ -1,23 +1,17 @@
 <template>
     <div class="login-container">
 
-        <div class="login-card">
+        <div class="login-dialog">
 
-            <p class="sns-title">ShareSpace</p>
+            <a class="dialog-title">ShareSpace</a>
 
-            <form class="login-form">
-                <label>
-                    <input type="email" class="form-control text-input" placeholder="Enter email" v-model="inputEmail">
-                </label>
-                <label>
-                    <input type="password" class="form-control text-input" placeholder="Enter password" v-model="inputPassword">
-                </label>
+            <el-input class="dialog-input" placeholder="Enter email" v-model="email" />
+            <el-input class="dialog-input" placeholder="Enter password" v-model="password" show-password />
 
-                <div class="login-form-button">
-                    <button class="btn btn-primary" v-on:click.prevent="loginClicked">Login</button>
-                    <button class="btn btn-primary" v-on:click.prevent="loginClicked">Sign Up</button>
-                </div>
-            </form>
+            <div class="dialog-button">
+                <el-button v-on:click.prevent="clickLogin" type="primary">Login</el-button>
+                <el-button v-on:click.prevent="clickLogin" type="primary">Sign Up</el-button>
+            </div>
 
         </div>
 
@@ -35,6 +29,7 @@
                 email: email,
                 pw: pw
             }).then((response) => {
+
                 if(response.status === 200) {
                     console.log('Login Get Token Success');
                     localStorage.setItem('token', response.data.token);
@@ -43,26 +38,27 @@
                     console.log('Login Get Token Error');
                     resolve(false);
                 }
+
             }).catch(() => resolve(false)); // wrong credential
 
         });
     }
 
-    async function loginClicked() {
+    async function clickLogin() {
 
-        if(this.inputEmail === '' || this.inputPassword === '') {
+        if(this.email === '' || this.password === '') {
             alert('Empty email or password!');
             return;
         }
 
-        const resultToken = await this.getToken(this.inputEmail, this.inputPassword);
+        const resultToken = await this.getToken(this.email, this.password);
 
         if(resultToken) await this.$router.push('/');
         else {
             alert('Login failed. Check email or password!');
 
-            this.inputEmail = "";
-            this.inputPassword = "";
+            this.email = "";
+            this.password = "";
         }
 
     }
@@ -70,14 +66,14 @@
     export default {
         data() {
             return {
-                inputEmail: "",
-                inputPassword: ""
+                email: "",
+                password: ""
             };
         },
 
         methods: {
             getToken,
-            loginClicked
+            clickLogin
         }
     }
 </script>
@@ -94,11 +90,11 @@
         justify-content: center;
     }
 
-    .login-card {
+    .login-dialog {
         width: 500px;
         height: 350px;
         background-color: #FAFAFA;
-        border-radius: 30px;
+        border-radius: 10px;
 
         display: flex;
         flex-direction: column;
@@ -106,27 +102,20 @@
         justify-content: center;
     }
 
-    .login-form {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .login-form-button {
-        display: flex;
-        flex-direction: row;
-    }
-
-    .sns-title {
+    .dialog-title {
         font-size: 30px;
         font-weight: bolder;
         color: #253B80;
         margin-bottom: 30px;
     }
 
-    .text-input {
+    .dialog-input {
         width: 400px;
         margin-bottom: 30px;
+    }
+
+    .dialog-button {
+        display: flex;
+        flex-direction: row;
     }
 </style>

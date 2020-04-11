@@ -8,11 +8,9 @@
 
                     <input type="file" multiple accept="image/png, image/jpeg" v-on:change="imageUploaded()" ref="image">
 
-                    <button type="submit" class="btn btn-primary" v-on:click="send()">Post</button>
+                    <button type="submit" v-on:click="send()">Post</button>
 
-                    <button v-on:click="$emit('close')">
-                        Close
-                    </button>
+                    <button v-on:click="$emit('close')">Close</button>
 
                 </div>
             </div>

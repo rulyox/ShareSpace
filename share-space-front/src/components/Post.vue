@@ -14,13 +14,10 @@
         </div>
 
         <div class="post-footer">
-            <button class="btn post-comment">
-                <img src="../assets/arrow_down.svg">
-                {{this.commentNumber}} Comments
-            </button>
+            <el-button class="post-comment" type="primary" icon="el-icon-chat-line-square" circle />
             <div>
-                <button class="btn post-edit">Edit</button>
-                <button class="btn post-delete">Delete</button>
+                <el-button type="success" icon="el-icon-edit" circle />
+                <el-button type="danger" icon="el-icon-delete" circle />
             </div>
         </div>
 
@@ -73,7 +70,7 @@
 
         width: 600px;
         background-color: #E9E9E9;
-        border-radius: 15px;
+        border-radius: 10px;
         margin-bottom: 30px;
 
         display: flex;
@@ -82,6 +79,10 @@
 
     .post-header {
         padding: 15px;
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
     }
 
     .post-user {
@@ -105,25 +106,12 @@
     }
 
     .post-footer {
-        padding: 15px;
+        padding-bottom: 15px;
+        padding-right: 15px;
+        padding-left: 15px;
 
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-    }
-
-    .post-comment {
-        font-size: 13px;
-        padding: 0;
-    }
-
-    .post-edit {
-        font-size: 13px;
-        color: #173cbf;
-    }
-
-    .post-delete {
-        font-size: 13px;
-        color: #b44115;
     }
 </style>

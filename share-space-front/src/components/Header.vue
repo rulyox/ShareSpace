@@ -1,14 +1,14 @@
 <template>
     <div class="header-container">
 
-        <a id="header-title">ShareSpace</a>
+        <a id="header-title" v-bind:href="'/'">ShareSpace</a>
 
         <el-dropdown id="header-profile" trigger="click">
 
             <img class="el-dropdown-link" width="50px" height="50px" style="background-color: mediumpurple; border-radius: 25px;"/>
 
             <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item icon="el-icon-plus" v-bind:href="'/#/profile/' + userId">My Profile</el-dropdown-item>
+                <el-dropdown-item icon="el-icon-user-solid" v-on:click.native="clickProfile">My Profile</el-dropdown-item>
                 <el-dropdown-item icon="el-icon-circle-plus">Action 2</el-dropdown-item>
             </el-dropdown-menu>
 
@@ -18,17 +18,26 @@
 </template>
 
 <script>
+    function clickProfile() {
+
+        this.$router.push('/profile/' + this.userId);
+
+    }
+
     export default {
-        props: ['userId', 'userName']
+        props: ['userId', 'userName'],
+
+        methods: {
+            clickProfile
+        }
     };
 </script>
 
 <style scoped>
     .header-container {
         width: 100%;
-        height: 60px;
+        height: 70px;
         background-color: #253B80;
-        color: #FAFAFA;
 
         display: flex;
         flex-direction: row;
@@ -38,6 +47,8 @@
     #header-title {
         font-size: 20px;
         font-weight: 700;
+        text-decoration: none;
+        color: #FAFAFA;
         margin-left: 30px;
     }
 
