@@ -2,6 +2,10 @@ import crypto from 'crypto';
 import mysqlManager from '../mysql-manager';
 import userSQL from './user-sql';
 import serverConfig from '../../config/server.json';
+import express from 'express';
+import formidable from 'formidable';
+import utility from '../utility';
+import dataConfig from '../../config/data.json';
 
 const checkLogin = (email: string, pw: string): Promise<boolean> => {
     return new Promise(async (resolve, reject) => {
@@ -104,6 +108,59 @@ const createUser = (email: string, pw: string, name: string): Promise<boolean> =
     });
 };
 
+const parseProfileForm = (request: express.Request): Promise<{image: object}> => {
+    return new Promise(async (resolve, reject) => {
+
+        try {
+
+            const formParser = new formidable.IncomingForm();
+            formParser.parse(request, function (error, fields, files) {
+
+                if(error) {
+                    reject(error);
+                    return
+                }
+
+                resolve({
+                    image: Object.values(files)[0]
+                });
+
+            });
+
+        } catch(error) {
+
+            reject(error);
+
+        }
+
+    });
+};
+
+const addProfileImage = (user: number, image: any): Promise<void> => {
+    return new Promise(async (resolve, reject) => {
+
+        try {
+
+            const originalPath = image.path;
+            const imageName = `user_${user}.png`;
+
+            // save image to png file
+            await utility.saveImage(originalPath, dataConfig.imagePath + imageName);
+
+            // add image to db
+            await mysqlManager.execute(userSQL.addProfileImage(user, imageName));
+
+            resolve();
+
+        } catch(error) {
+
+            reject(error);
+
+        }
+
+    });
+};
+
 const getUserData = (id: number): Promise<{result: boolean, name?: string}> => {
     return new Promise(async (resolve, reject) => {
 
@@ -165,5 +222,7 @@ export default {
     createToken,
     checkToken,
     createUser,
+    parseProfileForm,
+    addProfileImage,
     getUserData
 };

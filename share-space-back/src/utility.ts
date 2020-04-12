@@ -1,4 +1,5 @@
 import express from 'express';
+import sharp from 'sharp';
 
 const getTime = (): string => {
 
@@ -31,8 +32,30 @@ const errorHandler = (error: Error, request: express.Request, response: express.
 
 };
 
+const saveImage = (sourceImg: string, targetImg: string): Promise<any> => {
+    return new Promise(async (resolve, reject) => {
+
+        try {
+
+            await sharp(sourceImg)
+                .resize(512, 512)
+                .toFile(targetImg, (error, info) => {
+                    if(error) reject(error);
+                    resolve(info);
+                });
+
+        } catch(error) {
+
+            reject(error);
+
+        }
+
+    });
+};
+
 export default {
     getTime,
     print,
-    errorHandler
+    errorHandler,
+    saveImage
 };

@@ -1,7 +1,7 @@
 import express from 'express';
 import postController from './post-controller';
 import userController from '../user/user-controller';
-import utility from "../utility";
+import utility from '../utility';
 
 const router = express.Router();
 
@@ -23,12 +23,11 @@ Response JSON
 router.post('/', async (request, response, next) => {
 
     const token = request.headers?.token;
-    const formData: {text: string, images: object[]} = await postController.parseFormData(request);
+    const formData: {text: string, images: object[]} = await postController.parsePostForm(request);
 
     // type check
     if(typeof token !== 'string') {
-        response.writeHead(400);
-        response.end();
+        response.status(400).end();
         return;
     }
 
@@ -40,20 +39,12 @@ router.post('/', async (request, response, next) => {
 
         // auth check
         if(!tokenResult.auth) {
-            response.writeHead(401);
-            response.end();
+            response.status(401).end();
             return;
         }
 
         const user = tokenResult.id!;
-        const writeResult: boolean = await postController.writePost(user, formData.text, formData.images);
-
-        // write post failed
-        if(!writeResult) {
-            response.writeHead(500);
-            response.end();
-            return;
-        }
+        await postController.writePost(user, formData.text, formData.images);
 
         response.json({ 'result': true });
 

@@ -79,6 +79,28 @@ Sign up.
 ```
 
 
+#### POST /user/image
+
+Add profile image.
+
+* Request Header
+```
+token : string
+```
+
+* Request Form
+```
+files
+```
+
+* Response JSON
+```json
+{
+  "result": "boolean"
+}
+```
+
+
 #### GET /user/data/:id
 
 Get user data.

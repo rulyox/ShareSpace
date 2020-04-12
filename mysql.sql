@@ -3,6 +3,7 @@ CREATE TABLE `user` (
   `email` TEXT NOT NULL,
   `pw` TEXT NOT NULL,
   `name` TEXT NOT NULL,
+  `image` TEXT,
   CONSTRAINT `user_pk` PRIMARY KEY (`id`)
 );
 

@@ -14,7 +14,7 @@ Request Body JSON
 
 Response JSON
 {token: string}
- */
+*/
 router.post('/token', async (request, response, next) => {
 
     const email = request.body?.email;
@@ -22,8 +22,7 @@ router.post('/token', async (request, response, next) => {
 
     // type check
     if(typeof email !== 'string' || typeof pw !== 'string') {
-        response.writeHead(400);
-        response.end();
+        response.status(400).end();
         return;
     }
 
@@ -35,8 +34,7 @@ router.post('/token', async (request, response, next) => {
 
         // auth check
         if(!loginResult) {
-            response.writeHead(401);
-            response.end();
+            response.status(401).end();
             return;
         }
 
@@ -63,15 +61,14 @@ token : string
 
 Response JSON
 {id: number, email: string, name: string}
- */
+*/
 router.get('/', async (request, response, next) => {
 
     const token = request.headers?.token;
 
     // type check
     if(typeof token !== 'string') {
-        response.writeHead(400);
-        response.end();
+        response.status(400).end();
         return;
     }
 
@@ -83,8 +80,7 @@ router.get('/', async (request, response, next) => {
 
         // auth check
         if(!tokenResult.auth) {
-            response.writeHead(401);
-            response.end();
+            response.status(401).end();
             return;
         }
 
@@ -113,7 +109,7 @@ Request Body JSON
 
 Response JSON
 {result: boolean}
- */
+*/
 router.post('/', async (request, response, next) => {
 
     const email = request.body?.email;
@@ -122,8 +118,7 @@ router.post('/', async (request, response, next) => {
 
     // type check
     if(typeof email !== 'string' || typeof pw !== 'string' || typeof name !== 'string') {
-        response.writeHead(400);
-        response.end();
+        response.status(400).end();
         return;
     }
 
@@ -145,6 +140,57 @@ router.post('/', async (request, response, next) => {
 });
 
 /*
+POST /user/image
+
+Add profile image.
+
+Request Header
+token : string
+
+Request Form
+files
+
+Response JSON
+{result: boolean}
+*/
+router.post('/image', async (request, response, next) => {
+
+    const token = request.headers?.token;
+    const formData: {image: object} = await userController.parseProfileForm(request);
+
+    // type check
+    if(typeof token !== 'string') {
+        response.status(400).end();
+        return;
+    }
+
+    utility.print(`POST /user/image ${token}`);
+
+    try {
+
+        const tokenResult: {auth: boolean, id?: number, email?: string, name?: string} = await userController.checkToken(token);
+
+        // auth check
+        if(!tokenResult.auth) {
+            response.status(401).end();
+            return;
+        }
+
+        const user = tokenResult.id!;
+        await userController.addProfileImage(user, formData.image);
+
+        response.json({ 'result': true });
+
+    } catch(error) {
+
+        // error handler
+        next(new Error(`POST /user/image\n${error}`));
+
+    }
+
+});
+
+/*
 GET /user/data
 
 Get user data.
@@ -154,15 +200,14 @@ id : number
 
 Response JSON
 {name: string}
- */
+*/
 router.get('/data/:id', async (request, response, next) => {
 
     const id = Number(request.params?.id);
 
     // type check
     if(isNaN(id)) {
-        response.writeHead(400);
-        response.end();
+        response.status(400).end();
         return;
     }
 
@@ -174,8 +219,7 @@ router.get('/data/:id', async (request, response, next) => {
 
         // user exist check
         if(!userDataResult.result) {
-            response.writeHead(404);
-            response.end();
+            response.status(404).end();
             return;
         }
 
