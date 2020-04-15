@@ -39,7 +39,7 @@ const parsePostForm = (request: express.Request): Promise<{text: string, images:
     });
 };
 
-const writePost = (user: number, text: string, imageList: any[]): Promise<void> => {
+const writePost = (user: number, text: string, imageList: any[]): Promise<number> => {
     return new Promise(async (resolve, reject) => {
 
         try {
@@ -63,7 +63,7 @@ const writePost = (user: number, text: string, imageList: any[]): Promise<void> 
 
             utility.print(`Post : ${postId}, Images : ${imageList.length}`);
 
-            resolve();
+            resolve(postId);
 
         } catch(error) {
 

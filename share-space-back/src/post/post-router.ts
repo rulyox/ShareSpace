@@ -18,7 +18,7 @@ text : string
 files
 
 Response JSON
-{result: boolean}
+{postId: number}
 */
 router.post('/', async (request, response, next) => {
 
@@ -44,16 +44,13 @@ router.post('/', async (request, response, next) => {
         }
 
         const user = tokenResult.id!;
-        await postController.writePost(user, formData.text, formData.images);
+        const postId: number = await postController.writePost(user, formData.text, formData.images);
 
-        response.json({ 'result': true });
+        response.json({
+            postId: postId
+        });
 
-    } catch(error) {
-
-        // error handler
-        next(new Error(`POST /post\n${error}`));
-
-    }
+    } catch(error) { next(error); }
 
 });
 

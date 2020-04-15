@@ -13,7 +13,11 @@ Request Body JSON
 {email: string, pw: string}
 
 Response JSON
-{token: string}
+{result: number, message: string, token: string}
+
+Result Code
+101 : OK
+201 : Wrong email or password
 */
 router.post('/token', async (request, response, next) => {
 
@@ -30,24 +34,35 @@ router.post('/token', async (request, response, next) => {
 
     try {
 
-        const loginResult: boolean = await userController.checkLogin(email, pw);
+        const loginResultCode: number = await userController.checkLogin(email, pw);
 
-        // auth check
-        if(!loginResult) {
-            response.status(401).end();
-            return;
+        switch(loginResultCode) {
+
+            case 101:
+                const token: string = userController.createToken(email, pw);
+
+                response.json({
+                    result: 101,
+                    message: 'OK',
+                    token: token
+                });
+
+                break;
+
+            case 201:
+                response.json({
+                    result: 201,
+                    message: 'Wrong email or password'
+                });
+
+                break;
+
+            default:
+                next(new Error('Wrong Result Code'));
+
         }
 
-        const token: string = userController.createToken(email, pw);
-
-        response.json({ token: token });
-
-    } catch(error) {
-
-        // error handler
-        next(new Error(`POST /user/token\n${error}`));
-
-    }
+    } catch(error) { next(error); }
 
 });
 
@@ -90,12 +105,7 @@ router.get('/', async (request, response, next) => {
             name: tokenResult.name!
         });
 
-    } catch(error) {
-
-        // error handler
-        next(new Error(`GET /user\n${error}`));
-
-    }
+    } catch(error) { next(error); }
 
 });
 
@@ -108,7 +118,11 @@ Request Body JSON
 {email: string, pw: string, name: string}
 
 Response JSON
-{result: boolean}
+{result: number, message: string}
+
+Result Code
+101 : OK
+201 : Email exists
 */
 router.post('/', async (request, response, next) => {
 
@@ -126,16 +140,18 @@ router.post('/', async (request, response, next) => {
 
     try {
 
-        const addUserResult: boolean = await userController.createUser(email, pw, name);
+        const addUserResult: number = await userController.createUser(email, pw, name);
 
-        response.json({ result: addUserResult });
+        let resultMessage: string = '';
+        if(addUserResult === 101) resultMessage = 'OK';
+        else if(addUserResult === 201) resultMessage = 'Email exists';
 
-    } catch(error) {
+        response.json({
+            result: addUserResult,
+            message: resultMessage
+        });
 
-        // error handler
-        next(new Error(`POST /user\n${error}`));
-
-    }
+    } catch(error) { next(error); }
 
 });
 
@@ -181,12 +197,7 @@ router.post('/image', async (request, response, next) => {
 
         response.json({ 'result': true });
 
-    } catch(error) {
-
-        // error handler
-        next(new Error(`POST /user/image\n${error}`));
-
-    }
+    } catch(error) { next(error); }
 
 });
 
@@ -225,12 +236,7 @@ router.get('/data/:id', async (request, response, next) => {
 
         response.json({ name: userDataResult.name! });
 
-    } catch(error) {
-
-        // error handler
-        next(new Error(`GET /user/data\n${error}`));
-
-    }
+    } catch(error) { next(error); }
 
 });
 

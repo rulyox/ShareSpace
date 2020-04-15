@@ -7,15 +7,20 @@ import formidable from 'formidable';
 import utility from '../utility';
 import dataConfig from '../../config/data.json';
 
-const checkLogin = (email: string, pw: string): Promise<boolean> => {
+/*
+Result Code
+101 : OK
+201 : Wrong email or password
+*/
+const checkLogin = (email: string, pw: string): Promise<number> => {
     return new Promise(async (resolve, reject) => {
 
         try {
 
             const loginQuery = await mysqlManager.execute(userSQL.select(email, pw));
 
-            if(loginQuery.length > 0) resolve(true);
-            else resolve(false);
+            if(loginQuery.length === 1) resolve(101);
+            else resolve(201);
 
         } catch(error) {
 
@@ -55,8 +60,8 @@ const checkToken = (token: string): Promise<{auth: boolean, id?: number, email?:
             }
 
             // check login
-            const loginResult = await checkLogin(email, pw);
-            if(loginResult) {
+            const loginResult: number = await checkLogin(email, pw);
+            if(loginResult === 101) {
 
                 const loginQuery = (await mysqlManager.execute(userSQL.select(email, pw)))[0];
                 resolve({
@@ -77,27 +82,27 @@ const checkToken = (token: string): Promise<{auth: boolean, id?: number, email?:
     });
 };
 
-const createUser = (email: string, pw: string, name: string): Promise<boolean> => {
+/*
+Result Code
+101 : OK
+201 : Email exists
+*/
+const createUser = (email: string, pw: string, name: string): Promise<number> => {
     return new Promise(async (resolve, reject) => {
 
         try {
 
-            let emailExists: boolean;
-
             // check if same email exists
             const emailCheckQuery = await mysqlManager.execute(userSQL.checkEmail(email));
 
-            if(emailCheckQuery?.length === 0) emailExists = false;
-            else emailExists = true;
-
-            if(!emailExists) {
+            if(emailCheckQuery?.length === 0) {
 
                 const userAddQuery = await mysqlManager.execute(userSQL.add(email, pw, name));
 
-                if(userAddQuery?.affectedRows === 1) resolve(true);
-                else resolve(false);
+                if(userAddQuery?.affectedRows === 1) resolve(101);
+                else reject('User Add Failed')
 
-            } else resolve(false);
+            } else resolve(201);
 
         } catch(error) {
 

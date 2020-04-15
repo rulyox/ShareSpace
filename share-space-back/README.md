@@ -2,7 +2,6 @@
 
 Back-end server for the Share Space project.
 
-
 ## Used Programs
 
 * Node.js
@@ -10,14 +9,11 @@ Back-end server for the Share Space project.
 * Express
 * MySQL
 
-
 ## Web API
 
 Uses REST API.
 
-
 ### /user
-
 
 #### POST /user/token
 
@@ -34,10 +30,17 @@ Check login and create token.
 * Response JSON
 ```json
 {
+  "result": "number",
+  "message": "string",
   "token": "string"
 }
 ```
 
+* Result Code
+```
+101 : OK
+201 : Wrong email or password
+```
 
 #### GET /user
 
@@ -57,7 +60,6 @@ token : string
 }
 ```
 
-
 #### POST /user
 
 Sign up.
@@ -74,10 +76,16 @@ Sign up.
 * Response JSON
 ```json
 {
-  "result": "boolean"
+  "result": "number",
+  "message": "string"
 }
 ```
 
+* Result Code
+```
+101 : OK
+201 : Email exists
+```
 
 #### POST /user/image
 
@@ -100,7 +108,6 @@ files
 }
 ```
 
-
 #### GET /user/data/:id
 
 Get user data.
@@ -117,9 +124,7 @@ id : number
 }
 ```
 
-
 ### /post
-
 
 #### POST /post
 
@@ -139,6 +144,36 @@ files
 * Response JSON
 ```json
 {
-  "result": "boolean"
+  "postId": "number"
+}
+```
+
+## Configuration
+
+Save these JSON files in `/config`.
+
+### server.json
+```json
+{
+  "port": 8080,
+  "aes": "32byte AES key"
+}
+```
+
+### db.json
+```json
+{
+  "host": "MySQL host",
+  "port": 3306,
+  "user": "MySQL user name",
+  "pw": "MySQL password",
+  "name": "MySQL database name"
+}
+```
+
+### data.json
+```json
+{
+  "imagePath": "directory to save images"
 }
 ```
