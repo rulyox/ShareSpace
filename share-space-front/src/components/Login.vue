@@ -28,7 +28,7 @@
 
         try {
 
-            const tokenResult = await this.requestToken(this.email, this.password);
+            const tokenResult = await this.$request.getToken(this.email, this.password);
 
             if(tokenResult.result === 101) {
 
@@ -62,37 +62,15 @@
 
     }
 
-    function requestToken(email, pw) {
-        return new Promise((resolve, reject) => {
-
-            this.$axios.post(this.$config.server + '/user/token',
-                {
-                    email: email,
-                    pw: pw
-                })
-                .then((response) => {
-
-                    resolve({
-                        result: response.data.result,
-                        token: response.data.token
-                    });
-
-                })
-                .catch((error) => reject(error));
-
-        });
-    }
-
     export default {
         data() {
             return {
-                email: "",
-                password: ""
+                email: '',
+                password: ''
             };
         },
 
         methods: {
-            requestToken,
             clickLogin
         }
     }

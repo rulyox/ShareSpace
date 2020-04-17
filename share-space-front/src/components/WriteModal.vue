@@ -8,7 +8,7 @@
 
                     <input type="file" multiple accept="image/png, image/jpeg" v-on:change="uploadImage" ref="image">
 
-                    <button type="submit" v-on:click="requestWritePost">Post</button>
+                    <button type="submit" v-on:click="clickWrite">Post</button>
 
                     <button v-on:click="$emit('close')">Close</button>
 
@@ -20,33 +20,27 @@
 
 <script>
     function uploadImage() {
+
         const imageFile = this.$refs.image.files[0];
         this.imageList.push(imageFile);
+
     }
 
-    function requestWritePost() {
-        return new Promise((resolve, reject) => {
+    function clickWrite() {
 
-            const formData = new FormData();
-            formData.append('text', "this is title");
-            formData.append('file1', this.imageList[0]);
-            formData.append('file2', this.imageList[0]);
+        const token = localStorage.getItem('token');
+        const text = 'this is text';
 
-            const token = localStorage.getItem('token');
+        try {
 
-            this.$axios.post(this.$config.server + '/post', formData,
-                {
-                    headers: {
-                        'token': token,
-                        'Content-Type': 'multipart/form-data'
-                    }
-                })
-                .then(() => {
-                    resolve();
-                })
-                .catch((error) => { reject(error); });
+            this.$request.writePost(token, text, this.imageList);
 
-        });
+        } catch(error) {
+
+            console.log(error);
+
+        }
+
     }
 
     export default {
@@ -58,7 +52,7 @@
 
         methods: {
             uploadImage,
-            requestWritePost
+            clickWrite
         }
     };
 </script>

@@ -22,7 +22,7 @@
 
             try {
 
-                const loginResult = await this.requestLogin(token);
+                const loginResult = await this.$request.login(token);
 
                 this.userId = loginResult.id;
                 this.userEmail = loginResult.email;
@@ -41,27 +41,6 @@
 
     }
 
-    function requestLogin(token) {
-        return new Promise((resolve, reject) => {
-
-            this.$axios.get(this.$config.server + '/user',
-                {
-                    headers: {token: token}
-                })
-                .then((response) => {
-
-                    resolve({
-                        id: response.data.id,
-                        email: response.data.email,
-                        name: response.data.name
-                    });
-
-                })
-                .catch((error) => { reject(error); });
-
-        });
-    }
-
     export default {
         data() {
             return {
@@ -72,8 +51,7 @@
         },
 
         methods: {
-            getUserInfo,
-            requestLogin
+            getUserInfo
         },
 
         created() {
@@ -81,7 +59,7 @@
         },
 
         components: {
-            'Header': Header
+            Header
         }
     };
 </script>

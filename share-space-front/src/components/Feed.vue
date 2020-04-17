@@ -3,19 +3,11 @@
 
         feed
 
-        <div class="feed-list">
-
-            feed list
-
-        </div>
-
     </div>
 </template>
 
 <script>
-    export default {
-
-    };
+    export default { };
 </script>
 
 <style scoped>
@@ -24,9 +16,5 @@
 
         display: flex;
         flex-direction: column;
-    }
-
-    .feed-list {
-
     }
 </style>

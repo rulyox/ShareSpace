@@ -34,7 +34,7 @@
 
         try {
 
-            const profileResult = await this.requestProfile();
+            const profileResult = await this.$request.getProfile(this.profileId);
 
             this.profileName = profileResult.name;
 
@@ -46,22 +46,6 @@
 
         }
 
-    }
-
-    function requestProfile() {
-        return new Promise((resolve, reject) => {
-
-            this.$axios.get(this.$config.server + '/user/data/' + this.profileId)
-                .then((response) => {
-
-                    resolve({
-                        name: response.data.name
-                    });
-
-                })
-                .catch((error) => { reject(error); });
-
-        });
     }
 
     export default {
@@ -76,8 +60,7 @@
         },
 
         methods: {
-            getProfileInfo,
-            requestProfile
+            getProfileInfo
         },
 
         created() {
