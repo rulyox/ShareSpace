@@ -6,9 +6,9 @@
 
                     Write New Post
 
-                    <input type="file" multiple accept="image/png, image/jpeg" v-on:change="imageUploaded()" ref="image">
+                    <input type="file" multiple accept="image/png, image/jpeg" v-on:change="uploadImage" ref="image">
 
-                    <button type="submit" v-on:click="send()">Post</button>
+                    <button type="submit" v-on:click="requestWritePost">Post</button>
 
                     <button v-on:click="$emit('close')">Close</button>
 
@@ -19,46 +19,46 @@
 </template>
 
 <script>
-    import axios from 'axios';
-    import config from "../config";
-
-    function imageUploaded() {
+    function uploadImage() {
         const imageFile = this.$refs.image.files[0];
-        this.postImages.push(imageFile);
+        this.imageList.push(imageFile);
     }
 
-    function send() {
+    function requestWritePost() {
+        return new Promise((resolve, reject) => {
 
-        const formData = new FormData();
-        formData.append('text', "this is title");
-        formData.append('file1', this.postImages[0]);
-        formData.append('file2', this.postImages[0]);
+            const formData = new FormData();
+            formData.append('text', "this is title");
+            formData.append('file1', this.imageList[0]);
+            formData.append('file2', this.imageList[0]);
 
-        const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
 
-        axios.post(config.server + '/post', formData, {headers: {
-                'token': token,
-                'Content-Type': 'multipart/form-data'
-            }})
-            .then(function() {
+            this.$axios.post(this.$config.server + '/post', formData,
+                {
+                    headers: {
+                        'token': token,
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+                .then(() => {
+                    resolve();
+                })
+                .catch((error) => { reject(error); });
 
-            })
-            .catch(() => { // wrong token
-
-            });
-
+        });
     }
 
     export default {
         data() {
             return {
-                postImages: []
+                imageList: []
             };
         },
 
         methods: {
-            imageUploaded,
-            send
+            uploadImage,
+            requestWritePost
         }
     };
 </script>

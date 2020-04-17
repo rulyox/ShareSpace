@@ -11,51 +11,69 @@
 </template>
 
 <script>
-    import axios from 'axios';
     import Header from './Header';
-    import config from "../config";
 
     // check token and get user info
-    function getUserInfo() {
-
-        const thisVue = this;
-        const router = thisVue.$router;
+    async function getUserInfo() {
 
         const token = localStorage.getItem('token');
-        if(token === undefined) router.push('/login'); // no token
+        if(token === undefined) await this.$router.push('/login'); // no token
         else {
-            axios.get(config.server + '/user', {headers: {'token': token}})
-                .then(function(response) {
-                    if(response.status === 200) {
-                        console.log('Home Get User Success');
-                        thisVue.userId = response.data.id;
-                        thisVue.userEmail = response.data.email;
-                        thisVue.userName = response.data.name;
-                    } else { // error
-                        console.log('Home Get User Error');
-                        localStorage.removeItem('token');
-                        router.push('/login');
-                    }
-                })
-                .catch(() => { // wrong token
-                    localStorage.removeItem('token');
-                    router.push('/login')
-                });
+
+            try {
+
+                const loginResult = await this.requestLogin(token);
+
+                this.userId = loginResult.id;
+                this.userEmail = loginResult.email;
+                this.userName = loginResult.name;
+
+            } catch(error) {
+
+                console.log(error);
+
+                localStorage.removeItem('token');
+                await this.$router.push('/login')
+
+            }
+
         }
 
+    }
+
+    function requestLogin(token) {
+        return new Promise((resolve, reject) => {
+
+            this.$axios.get(this.$config.server + '/user',
+                {
+                    headers: {token: token}
+                })
+                .then((response) => {
+
+                    resolve({
+                        id: response.data.id,
+                        email: response.data.email,
+                        name: response.data.name
+                    });
+
+                })
+                .catch((error) => { reject(error); });
+
+        });
     }
 
     export default {
         data() {
             return {
-                userId: "",
-                userEmail: "",
-                userName: ""
+                userId: '',
+                userEmail: '',
+                userName: ''
             };
         },
 
         methods: {
-            getUserInfo
+            getUserInfo,
+            requestLogin
         },
 
         created() {

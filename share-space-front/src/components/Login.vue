@@ -19,31 +19,6 @@
 </template>
 
 <script>
-    import axios from 'axios';
-    import config from "../config";
-
-    function getToken(email, pw) {
-        return new Promise((resolve) => {
-
-            axios.post(config.server + '/user/token', {
-                email: email,
-                pw: pw
-            }).then((response) => {
-
-                if(response.status === 200) {
-                    console.log('Login Get Token Success');
-                    localStorage.setItem('token', response.data.token);
-                    resolve(true);
-                } else { // error
-                    console.log('Login Get Token Error');
-                    resolve(false);
-                }
-
-            }).catch(() => resolve(false)); // wrong credential
-
-        });
-    }
-
     async function clickLogin() {
 
         if(this.email === '' || this.password === '') {
@@ -51,16 +26,61 @@
             return;
         }
 
-        const resultToken = await this.getToken(this.email, this.password);
+        try {
 
-        if(resultToken) await this.$router.push('/');
-        else {
-            alert('Login failed. Check email or password!');
+            const tokenResult = await this.requestToken(this.email, this.password);
 
-            this.email = "";
-            this.password = "";
+            if(tokenResult.result === 101) {
+
+                localStorage.setItem('token', tokenResult.token);
+
+                await this.$router.push('/');
+
+            } else if(tokenResult.result === 201) {
+
+                alert('Login failed. Check email or password!');
+
+                this.email = '';
+                this.password = '';
+
+            } else {
+
+                alert('Unknown error!');
+
+                this.email = '';
+                this.password = '';
+
+            }
+
+        } catch(error) {
+
+            console.log(error);
+
+            await this.$router.push('/login')
+
         }
 
+    }
+
+    function requestToken(email, pw) {
+        return new Promise((resolve, reject) => {
+
+            this.$axios.post(this.$config.server + '/user/token',
+                {
+                    email: email,
+                    pw: pw
+                })
+                .then((response) => {
+
+                    resolve({
+                        result: response.data.result,
+                        token: response.data.token
+                    });
+
+                })
+                .catch((error) => reject(error));
+
+        });
     }
 
     export default {
@@ -72,7 +92,7 @@
         },
 
         methods: {
-            getToken,
+            requestToken,
             clickLogin
         }
     }

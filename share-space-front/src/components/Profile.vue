@@ -28,88 +28,59 @@
 
 <script>
     import Post from './Post';
-    import axios from "axios";
-    import config from "../config";
-    import WriteModal from "./WriteModal";
+    import WriteModal from './WriteModal';
 
-    // check token and get user info
-    function getUserInfo() {
+    async function getProfileInfo() {
 
-        const thisVue = this;
-        const router = thisVue.$router;
+        try {
 
-        const token = localStorage.getItem('token');
-        if(token === undefined) router.push('/login'); // no token
-        else {
-            axios.get(config.server + '/user', {headers: {'token': token}})
-                .then(function(response) {
-                    if(response.status === 200) {
-                        console.log('Profile Get User Success');
-                        thisVue.userId = response.data.id;
-                        thisVue.userEmail = response.data.email;
-                        thisVue.userName = response.data.name;
-                    } else { // error
-                        console.log('Profile Get User Error');
-                        localStorage.removeItem('token');
-                        router.push('/login');
-                    }
-                })
-                .catch(() => { // wrong token
-                    localStorage.removeItem('token');
-                    router.push('/login')
-                });
+            const profileResult = await this.requestProfile();
+
+            this.profileName = profileResult.name;
+
+        } catch(error) {
+
+            console.log(error);
+
+            await this.$router.push('/');
+
         }
 
     }
 
-    function getProfileInfo() {
+    function requestProfile() {
+        return new Promise((resolve, reject) => {
 
-        const thisVue = this;
-        const router = thisVue.$router;
+            this.$axios.get(this.$config.server + '/user/data/' + this.profileId)
+                .then((response) => {
 
-        axios.get(config.server + '/user/data/' + this.profileId)
-            .then((response) => {
-                if(response.status === 200) {
-                    thisVue.profileName = response.data.name;
-                    console.log('Profile Target Info Success');
-                } else { // wrong user
-                    alert('No user found!');
-                    router.push('/');
-                }
-            })
-            .catch(() => { // wrong user
-                alert('No user found!');
-                router.push('/');
-            });
+                    resolve({
+                        name: response.data.name
+                    });
 
+                })
+                .catch((error) => { reject(error); });
+
+        });
     }
 
     export default {
-        props: ['propsProfileId'],
+        props: ['profileId'],
 
         data() {
             return {
-                userId: "",
-                userEmail: "",
-                userName: "",
-                profileId: this.propsProfileId,
-                profileName: "",
+                profileName: '',
                 items: ['1', '2', '3'],
                 showModal: false
             };
         },
 
         methods: {
-            getUserInfo,
-            getProfileInfo
+            getProfileInfo,
+            requestProfile
         },
 
         created() {
-            this.getUserInfo();
-            this.getProfileInfo();
-        },
-
-        updated() {
             this.getProfileInfo();
         },
 

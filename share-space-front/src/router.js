@@ -22,7 +22,7 @@ const router = new VueRouter({
                     },
                 },
                 {
-                    path: '/profile/:propsProfileId',
+                    path: '/profile/:profileId',
                     components: {
                         'homeContent': ProfileComponent
                     },
