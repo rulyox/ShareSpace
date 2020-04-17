@@ -1,7 +1,7 @@
 <template>
     <div class="home-container">
 
-        <Header v-bind:userId="userId" v-bind:userName="userName"></Header>
+        <Header></Header>
 
         <div class="content">
             <router-view name="homeContent"></router-view>
@@ -24,15 +24,18 @@
 
                 const loginResult = await this.$request.login(token);
 
-                this.userId = loginResult.id;
-                this.userEmail = loginResult.email;
-                this.userName = loginResult.name;
+                this.$store.commit('setToken', token);
+                this.$store.commit('setId', loginResult.id);
+                this.$store.commit('setEmail', loginResult.email);
+                this.$store.commit('setName', loginResult.name);
 
             } catch(error) {
 
                 console.log(error);
 
                 localStorage.removeItem('token');
+                this.$store.commit('removeToken');
+
                 await this.$router.push('/login')
 
             }
@@ -42,14 +45,6 @@
     }
 
     export default {
-        data() {
-            return {
-                userId: '',
-                userEmail: '',
-                userName: ''
-            };
-        },
-
         methods: {
             getUserInfo
         },

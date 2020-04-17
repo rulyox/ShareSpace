@@ -47,8 +47,8 @@
 
         data() {
             return {
-                userName: "",
-                text: "",
+                userName: '',
+                text: '',
                 image: [],
                 commentNumber: 0
             };

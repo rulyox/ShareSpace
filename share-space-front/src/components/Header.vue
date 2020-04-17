@@ -20,13 +20,13 @@
 <script>
     function clickProfile() {
 
-        this.$router.push('/profile/' + this.userId);
+        const userId = this.$store.state.userId;
+
+        this.$router.push('/profile/' + userId);
 
     }
 
     export default {
-        props: ['userId', 'userName'],
-
         methods: {
             clickProfile
         }

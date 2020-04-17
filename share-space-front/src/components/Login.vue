@@ -32,7 +32,10 @@
 
             if(tokenResult.result === 101) {
 
-                localStorage.setItem('token', tokenResult.token);
+                const token = tokenResult.token;
+
+                localStorage.setItem('token', token);
+                this.$store.commit('setToken', token);
 
                 await this.$router.push('/');
 

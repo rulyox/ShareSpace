@@ -28,7 +28,7 @@
 
     function clickWrite() {
 
-        const token = localStorage.getItem('token');
+        const token = this.$store.state.token;
         const text = 'this is text';
 
         try {
