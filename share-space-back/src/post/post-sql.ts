@@ -11,16 +11,22 @@ const selectNumberOfPostByUser = (user: number): string =>
     FROM post
     WHERE user = ${user};`;
 
-const selectPostByUserInRange = (user: number, start: number): string =>
+const selectPostByUserInRange = (user: number, start: number, count: number): string =>
     `SELECT id, text
     FROM post
     WHERE user = ${user}
     ORDER BY id DESC
-    LIMIT ${start}, 10;`;
+    LIMIT ${start}, ${count};`;
+
+const selectPostImage = (post: number): string =>
+    `SELECT image
+    FROM post_image
+    WHERE post = ${post};`;
 
 export default {
     add,
     addImage,
     selectNumberOfPostByUser,
-    selectPostByUserInRange
+    selectPostByUserInRange,
+    selectPostImage
 };

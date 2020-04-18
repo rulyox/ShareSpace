@@ -67,19 +67,21 @@ Request Param
 user : number
 
 Request Query
-start : number
+start : number (starts from 0)
+count : number
 
 Response JSON
-{result: number, message: string, total: number, list: object list}
+{result: number, message: string, total: number, list: {id: number, text: string, image: string[]}[]}
 */
 router.get('/user/:user', async (request, response, next) => {
 
     const token = request.headers?.token;
     const user = Number(request.params?.user);
     const start = Number(request.query?.start);
+    const count = Number(request.query?.count);
 
     // type check
-    if(typeof token !== 'string' || isNaN(user) || isNaN(start)) {
+    if(typeof token !== 'string' || isNaN(user) || isNaN(start) || isNaN(count)) {
         response.status(400).end();
         return;
     }
@@ -96,12 +98,14 @@ router.get('/user/:user', async (request, response, next) => {
             return;
         }
 
+        // get number of posts by user
         const postCount = await postController.getNumberOfPostByUser(user);
 
         // start should be 0 from postCount-1
         if(start >= 0 && start < postCount) {
 
-            const postList: {id: number, text: string}[] = await postController.getPostByUser(user, start);
+            // get post list by user
+            const postList: {id: number, text: string, image: string[]}[] = await postController.getPostByUser(user, start, count);
 
             response.json({
                 result: 101,

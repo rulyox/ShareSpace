@@ -164,7 +164,8 @@ user : number
 
 * Request Query
 ```
-start : number
+start : number (starts from 0)
+count : number
 ```
 
 * Response JSON
@@ -173,7 +174,7 @@ start : number
   "result": "number",
   "message": "string",
   "total": "number",
-  "list": "object list"
+  "list": "{id: number, text: string, image: string[]}[]"
 }
 ```
 

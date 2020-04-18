@@ -71,6 +71,7 @@ const getNumberOfPostByUser = (user: number): Promise<number> => {
 
         try {
 
+            // get number of posts by user
             const postCountQuery = (await mysqlManager.execute(postSQL.selectNumberOfPostByUser(user)))[0];
             const postCount = postCountQuery.count;
 
@@ -81,14 +82,32 @@ const getNumberOfPostByUser = (user: number): Promise<number> => {
     });
 };
 
-const getPostByUser = (user: number, start: number): Promise<{id: number, text: string}[]> => {
+const getPostByUser = (user: number, start: number, count: number): Promise<{id: number, text: string, image: string[]}[]> => {
     return new Promise(async (resolve, reject) => {
 
         try {
 
-            const postQuery = await mysqlManager.execute(postSQL.selectPostByUserInRange(user, start));
+            // get post list by user
+            const postQuery: {id: number, text: string}[] = await mysqlManager.execute(postSQL.selectPostByUserInRange(user, start, count));
 
-            resolve(postQuery);
+            const postList = [];
+
+            for(const post of postQuery) {
+
+                // get images of a post
+                const postImageQuery: {image: string}[] = await mysqlManager.execute(postSQL.selectPostImage(post.id));
+
+                // save image file name to list
+                const imageList = [];
+                for(const image of postImageQuery) imageList.push(image.image);
+
+                // add image list to post
+                const newPost = Object.assign(post, {image: imageList});
+                postList.push(newPost);
+
+            }
+
+            resolve(postList);
 
         } catch(error) { reject(error); }
 
