@@ -20,7 +20,8 @@
 <script>
     function clickProfile() {
 
-        const userId = this.$store.state.userId;
+        const userData = this.$store.getters.userData;
+        const userId = userData.id;
 
         this.$router.push('/profile/' + userId);
 

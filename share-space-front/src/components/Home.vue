@@ -24,18 +24,24 @@
 
                 const loginResult = await this.$request.login(token);
 
-                this.$store.commit('setToken', token);
-                this.$store.commit('setId', loginResult.id);
-                this.$store.commit('setEmail', loginResult.email);
-                this.$store.commit('setName', loginResult.name);
+                // save data to vuex
+                await this.$store.dispatch('initialize', {
+                    token: token,
+                    id: loginResult.id,
+                    email: loginResult.email,
+                    name: loginResult.name
+                });
 
             } catch(error) {
 
                 console.log(error);
 
                 localStorage.removeItem('token');
-                this.$store.commit('removeToken');
 
+                // delete all data in vuex
+                await this.$store.dispatch('reset');
+
+                // go to login
                 await this.$router.push('/login')
 
             }

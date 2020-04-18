@@ -67,6 +67,12 @@
             this.getProfileInfo();
         },
 
+        watch: {
+            profileId: function() {
+                this.getProfileInfo();
+            }
+        },
+
         components: {
             Post,
             WriteModal

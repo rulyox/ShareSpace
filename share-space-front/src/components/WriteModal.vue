@@ -26,14 +26,16 @@
 
     }
 
-    function clickWrite() {
+    async function clickWrite() {
 
-        const token = this.$store.state.token;
+        const token = this.$store.getters.token;
         const text = 'this is text';
 
         try {
 
-            this.$request.writePost(token, text, this.imageList);
+            await this.$request.writePost(token, text, this.imageList);
+
+            console.log('done');
 
         } catch(error) {
 
