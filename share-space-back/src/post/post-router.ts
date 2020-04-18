@@ -31,8 +31,6 @@ router.post('/', async (request, response, next) => {
         return;
     }
 
-    utility.print(`POST /post ${token}`);
-
     try {
 
         const tokenResult: {auth: boolean, id?: number, email?: string, name?: string} = await userController.checkToken(token);
@@ -42,6 +40,8 @@ router.post('/', async (request, response, next) => {
             response.status(401).end();
             return;
         }
+
+        utility.print(`POST /post user: ${tokenResult.id} file: ${formData.images.length}`);
 
         const user = tokenResult.id!;
 
@@ -86,8 +86,6 @@ router.get('/user/:user', async (request, response, next) => {
         return;
     }
 
-    utility.print(`GET /post ${token}`);
-
     try {
 
         const tokenResult: {auth: boolean, id?: number, email?: string, name?: string} = await userController.checkToken(token);
@@ -97,6 +95,8 @@ router.get('/user/:user', async (request, response, next) => {
             response.status(401).end();
             return;
         }
+
+        utility.print(`GET /post/user user: ${tokenResult.id} start: ${start} count: ${count}`);
 
         // get number of posts by user
         const postCount = await postController.getNumberOfPostByUser(user);

@@ -87,8 +87,6 @@ router.get('/', async (request, response, next) => {
         return;
     }
 
-    utility.print(`GET /user ${token}`);
-
     try {
 
         const tokenResult: {auth: boolean, id?: number, email?: string, name?: string} = await userController.checkToken(token);
@@ -98,6 +96,8 @@ router.get('/', async (request, response, next) => {
             response.status(401).end();
             return;
         }
+
+        utility.print(`GET /user user: ${tokenResult.id}`);
 
         response.json({
             id: tokenResult.id!,
@@ -180,8 +180,6 @@ router.post('/image', async (request, response, next) => {
         return;
     }
 
-    utility.print(`POST /user/image ${token}`);
-
     try {
 
         const tokenResult: {auth: boolean, id?: number, email?: string, name?: string} = await userController.checkToken(token);
@@ -191,6 +189,8 @@ router.post('/image', async (request, response, next) => {
             response.status(401).end();
             return;
         }
+
+        utility.print(`POST /user/image user: ${tokenResult.id}`);
 
         const user = tokenResult.id!;
         await userController.addProfileImage(user, formData.image);

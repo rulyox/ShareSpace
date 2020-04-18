@@ -57,8 +57,6 @@ const writePost = (user: number, text: string, imageList: any[]): Promise<number
 
             }
 
-            utility.print(`Post : ${postId}, Images : ${imageList.length}`);
-
             resolve(postId);
 
         } catch(error) { reject(error); }
