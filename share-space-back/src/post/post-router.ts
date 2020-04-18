@@ -44,11 +44,81 @@ router.post('/', async (request, response, next) => {
         }
 
         const user = tokenResult.id!;
+
         const postId: number = await postController.writePost(user, formData.text, formData.images);
 
         response.json({
             postId: postId
         });
+
+    } catch(error) { next(error); }
+
+});
+
+/*
+GET /post/user
+
+Get post list by user.
+
+Request Header
+token : string
+
+Request Param
+user : number
+
+Request Query
+start : number
+
+Response JSON
+{result: number, message: string, total: number, list: object list}
+*/
+router.get('/user/:user', async (request, response, next) => {
+
+    const token = request.headers?.token;
+    const user = Number(request.params?.user);
+    const start = Number(request.query?.start);
+
+    // type check
+    if(typeof token !== 'string' || isNaN(user) || isNaN(start)) {
+        response.status(400).end();
+        return;
+    }
+
+    utility.print(`GET /post ${token}`);
+
+    try {
+
+        const tokenResult: {auth: boolean, id?: number, email?: string, name?: string} = await userController.checkToken(token);
+
+        // auth check
+        if(!tokenResult.auth) {
+            response.status(401).end();
+            return;
+        }
+
+        const postCount = await postController.getNumberOfPostByUser(user);
+
+        // start should be 0 from postCount-1
+        if(start >= 0 && start < postCount) {
+
+            const postList: {id: number, text: string}[] = await postController.getPostByUser(user, start);
+
+            response.json({
+                result: 101,
+                message: 'OK',
+                total: postCount,
+                list: postList
+            });
+
+        } else {
+
+            response.json({
+                result: 201,
+                message: 'Wrong range',
+                total: postCount
+            });
+
+        }
 
     } catch(error) { next(error); }
 

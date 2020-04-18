@@ -148,6 +148,35 @@ files
 }
 ```
 
+#### GET /post/user
+
+Get post list by user.
+
+* Request Header
+```
+token : string
+```
+
+* Request Param
+```
+user : number
+```
+
+* Request Query
+```
+start : number
+```
+
+* Response JSON
+```json
+{
+  "result": "number",
+  "message": "string",
+  "total": "number",
+  "list": "object list"
+}
+```
+
 ## Configuration
 
 Save these JSON files in `/config`.

@@ -30,11 +30,7 @@ const parsePostForm = (request: express.Request): Promise<{text: string, images:
 
             });
 
-        } catch(error) {
-
-            reject(error);
-
-        }
+        } catch(error) { reject(error); }
 
     });
 };
@@ -65,16 +61,43 @@ const writePost = (user: number, text: string, imageList: any[]): Promise<number
 
             resolve(postId);
 
-        } catch(error) {
+        } catch(error) { reject(error); }
 
-            reject(error);
+    });
+};
 
-        }
+const getNumberOfPostByUser = (user: number): Promise<number> => {
+    return new Promise(async (resolve, reject) => {
+
+        try {
+
+            const postCountQuery = (await mysqlManager.execute(postSQL.selectNumberOfPostByUser(user)))[0];
+            const postCount = postCountQuery.count;
+
+            resolve(postCount);
+
+        } catch(error) { reject(error); }
+
+    });
+};
+
+const getPostByUser = (user: number, start: number): Promise<{id: number, text: string}[]> => {
+    return new Promise(async (resolve, reject) => {
+
+        try {
+
+            const postQuery = await mysqlManager.execute(postSQL.selectPostByUserInRange(user, start));
+
+            resolve(postQuery);
+
+        } catch(error) { reject(error); }
 
     });
 };
 
 export default {
     parsePostForm,
-    writePost
+    writePost,
+    getNumberOfPostByUser,
+    getPostByUser
 };

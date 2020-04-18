@@ -22,11 +22,7 @@ const checkLogin = (email: string, pw: string): Promise<number> => {
             if(loginQuery.length === 1) resolve(101);
             else resolve(201);
 
-        } catch(error) {
-
-            reject(error);
-
-        }
+        } catch(error) { reject(error); }
 
     });
 };
@@ -73,11 +69,7 @@ const checkToken = (token: string): Promise<{auth: boolean, id?: number, email?:
 
             } else resolve({ auth: false });
 
-        } catch(error) {
-
-            reject(error);
-
-        }
+        } catch(error) { reject(error); }
 
     });
 };
@@ -104,11 +96,7 @@ const createUser = (email: string, pw: string, name: string): Promise<number> =>
 
             } else resolve(201);
 
-        } catch(error) {
-
-            reject(error);
-
-        }
+        } catch(error) { reject(error); }
 
     });
 };
@@ -132,11 +120,7 @@ const parseProfileForm = (request: express.Request): Promise<{image: object}> =>
 
             });
 
-        } catch(error) {
-
-            reject(error);
-
-        }
+        } catch(error) { reject(error); }
 
     });
 };
@@ -157,11 +141,7 @@ const addProfileImage = (user: number, image: any): Promise<void> => {
 
             resolve();
 
-        } catch(error) {
-
-            reject(error);
-
-        }
+        } catch(error) { reject(error); }
 
     });
 };
@@ -188,11 +168,7 @@ const getUserData = (id: number): Promise<{result: boolean, name?: string}> => {
 
             }
 
-        } catch(error) {
-
-            reject(error);
-
-        }
+        } catch(error) { reject(error); }
 
     });
 };
