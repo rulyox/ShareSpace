@@ -1,8 +1,10 @@
 const add = (user: number, text: string): string =>
-    `INSERT INTO post VALUES (NULL, ${user}, "${text}");`;
+    `INSERT INTO post
+    VALUES (NULL, ${user}, "${text}");`;
 
 const addImage = (post: number, image: string): string =>
-    `INSERT INTO post_image VALUES (NULL, ${post}, "${image}");`;
+    `INSERT INTO post_image
+    VALUES (NULL, ${post}, "${image}");`;
 
 const selectNumberOfPostByUser = (user: number): string =>
     `SELECT COUNT(*) as count
