@@ -52,8 +52,6 @@
 
             console.log(error);
 
-            await this.$router.push('/login')
-
         }
 
     }

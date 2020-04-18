@@ -1,7 +1,7 @@
 <template>
     <div class="header-container">
 
-        <a id="header-title" v-bind:href="'/'">ShareSpace</a>
+        <a id="header-title" v-on:click="clickHome">ShareSpace</a>
 
         <el-dropdown id="header-profile" trigger="click">
 
@@ -18,17 +18,26 @@
 </template>
 
 <script>
+    function clickHome() {
+
+        const path = '/';
+        if(this.$router.currentRoute.path !== path) this.$router.push(path);
+
+    }
+
     function clickProfile() {
 
         const userData = this.$store.getters.userData;
         const userId = userData.id;
 
-        this.$router.push('/profile/' + userId);
+        const path = '/profile/' + userId;
+        if(this.$router.currentRoute.path !== path) this.$router.push(path);
 
     }
 
     export default {
         methods: {
+            clickHome,
             clickProfile
         }
     };
@@ -50,11 +59,17 @@
         font-weight: 700;
         text-decoration: none;
         color: #FAFAFA;
+
+        cursor: pointer;
+
         margin-left: 30px;
     }
 
     #header-profile {
         font-size: 15px;
+
+        cursor: pointer;
+
         margin-left: auto;
         margin-right: 30px;
     }
