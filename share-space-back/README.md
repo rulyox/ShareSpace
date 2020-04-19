@@ -203,7 +203,7 @@ id : number
 {
   "result": "number",
   "message": "string",
-  "data": "{text: string, image: string[]}"
+  "data": "{user: number, name: string, text: string, image: string[]}"
 }
 ```
 

@@ -144,7 +144,7 @@ Request Param
 id : number
 
 Response JSON
-{result: number, message: string, data: {text: string, image: string[]}}
+{result: number, message: string, data: {user: number, name: string, text: string, image: string[]}}
 
 Result Code
 101 : OK
@@ -173,7 +173,7 @@ router.get('/:id', async (request, response, next) => {
 
         utility.print(`GET /post user: ${tokenResult.id} id: ${id}`);
 
-        const postData: {result: number, text?: string, image?: string[]} = await postController.getPostData(id);
+        const postData: {result: number, user?: number, name?: string, text?: string, image?: string[]} = await postController.getPostData(id);
 
         switch(postData.result) {
 
@@ -182,6 +182,8 @@ router.get('/:id', async (request, response, next) => {
                     result: 101,
                     message: 'OK',
                     data: {
+                        user: postData.user,
+                        name: postData.name,
                         text: postData.text,
                         image: postData.image
                     }

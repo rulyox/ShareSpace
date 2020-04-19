@@ -19,9 +19,9 @@ const selectPostByUserInRange = (user: number, start: number, count: number): st
     LIMIT ${start}, ${count};`;
 
 const selectPostData = (id: number): string =>
-    `SELECT text
-    FROM post
-    WHERE id = ${id};`;
+    `SELECT user.id AS user, user.name AS name, post.text AS text
+    FROM post, user
+    WHERE post.user = user.id AND post.id = ${id};`;
 
 const selectPostImage = (post: number): string =>
     `SELECT image
