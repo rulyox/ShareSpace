@@ -51,12 +51,12 @@
     }
 
     export default {
-        methods: {
-            getUserInfo
+        mounted() {
+            this.getUserInfo();
         },
 
-        created() {
-            this.getUserInfo();
+        methods: {
+            getUserInfo
         },
 
         components: {

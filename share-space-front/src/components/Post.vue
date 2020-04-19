@@ -10,7 +10,6 @@
 
         <div class="post-content">
             {{this.text}}
-            {{this.image.length}}
         </div>
 
         <div class="post-footer">
@@ -25,20 +24,29 @@
 </template>
 
 <script>
-    function getPost(postId) {
+    async function getPostData(postId) {
 
-        this.userName = 'YoungHwan Joo';
-        this.commentNumber = 0;
+        try {
 
-        if(postId === '1') this.text = "some text here";
-        else if(postId === '2') {
+            const token = this.$store.getters.token;
 
-            this.text = "hello world";
-            this.image.push('asdf');
-            this.image.push('asdf');
+            const postDataResult = await this.$request.getPostData(token, postId);
+
+            if(postDataResult.result === 101) { // OK
+
+                const postData = postDataResult.data;
+
+                this.userName = postData.name;
+                this.text = postData.text;
+                this.image = postData.image;
+
+            }
+
+        } catch(error) {
+
+            console.log(error);
 
         }
-        else if(postId === '3') this.text = "testing id 3...";
 
     }
 
@@ -49,17 +57,16 @@
             return {
                 userName: '',
                 text: '',
-                image: [],
-                commentNumber: 0
+                image: []
             };
         },
 
-        methods: {
-            getPost
+        mounted() {
+            this.getPostData(this.postId);
         },
 
-        created() {
-            this.getPost(this.postId);
+        methods: {
+            getPostData
         }
     }
 </script>

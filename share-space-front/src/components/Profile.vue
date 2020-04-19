@@ -13,7 +13,7 @@
 
             <div class="post-list">
 
-                <Post v-for="item in this.items" v-bind:key="item" v-bind:postId="item"></Post>
+                <Post v-for="post in this.postList" v-bind:key="post" v-bind:postId="post"></Post>
 
             </div>
 
@@ -48,29 +48,61 @@
 
     }
 
+    async function getPosts() {
+
+        try {
+
+            const token = this.$store.getters.token;
+
+            // check if token exists
+            if(token === null) return;
+
+            const postResult = await this.$request.getPostByUser(token, this.profileId, 0);
+
+            if(postResult.result === 101) { // OK
+
+                this.postTotal = postResult.total;
+                this.postList = this.postList.concat(postResult.list);
+
+            }
+
+        } catch(error) {
+
+            console.log(error);
+
+        }
+
+    }
+
     export default {
         props: ['profileId'],
 
         data() {
             return {
                 profileName: '',
-                items: ['1', '2', '3'],
+                postTotal: 0,
+                postList: [],
                 showModal: false
             };
         },
 
-        methods: {
-            getProfileInfo
+        computed: {
+            token() { return this.$store.getters.token; }
         },
 
-        created() {
+        mounted() {
             this.getProfileInfo();
+            this.getPosts();
         },
 
         watch: {
-            profileId: function() {
-                this.getProfileInfo();
-            }
+            profileId() { this.getProfileInfo(); },
+            token(value) { if(value !== null) this.getPosts(); }
+        },
+
+        methods: {
+            getProfileInfo,
+            getPosts
         },
 
         components: {
