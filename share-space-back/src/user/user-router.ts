@@ -57,9 +57,6 @@ router.post('/token', async (request, response, next) => {
 
                 break;
 
-            default:
-                next(new Error('Wrong Result Code'));
-
         }
 
     } catch(error) { next(error); }

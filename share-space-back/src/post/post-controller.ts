@@ -80,32 +80,58 @@ const getNumberOfPostByUser = (user: number): Promise<number> => {
     });
 };
 
-const getPostByUser = (user: number, start: number, count: number): Promise<{id: number, text: string, image: string[]}[]> => {
+const getPostByUser = (user: number, start: number, count: number): Promise<number[]> => {
     return new Promise(async (resolve, reject) => {
 
         try {
 
             // get post list by user
-            const postQuery: {id: number, text: string}[] = await mysqlManager.execute(postSQL.selectPostByUserInRange(user, start, count));
+            const postQuery: {id: number}[] = await mysqlManager.execute(postSQL.selectPostByUserInRange(user, start, count));
 
+            // save post id to list
             const postList = [];
+            for(const post of postQuery) postList.push(post.id);
 
-            for(const post of postQuery) {
+            resolve(postList);
+
+        } catch(error) { reject(error); }
+
+    });
+};
+
+/*
+Result Code
+101 : OK
+201 : Post does not exist
+*/
+const getPostData = (id: number): Promise<{result: number, text?: string, image?: string[]}> => {
+    return new Promise(async (resolve, reject) => {
+
+        try {
+
+            // get data of a post
+            const postDataQuery: {text: string}[] = (await mysqlManager.execute(postSQL.selectPostData(id)));
+
+            if(postDataQuery.length === 1) {
 
                 // get images of a post
-                const postImageQuery: {image: string}[] = await mysqlManager.execute(postSQL.selectPostImage(post.id));
+                const postImageQuery: {image: string}[] = await mysqlManager.execute(postSQL.selectPostImage(id));
 
                 // save image file name to list
                 const imageList = [];
                 for(const image of postImageQuery) imageList.push(image.image);
 
-                // add image list to post
-                const newPost = Object.assign(post, {image: imageList});
-                postList.push(newPost);
+                resolve({
+                    result: 101,
+                    text: postDataQuery[0].text,
+                    image: imageList
+                });
+
+            } else { // if post does not exist
+
+                resolve({ result: 201 });
 
             }
-
-            resolve(postList);
 
         } catch(error) { reject(error); }
 
@@ -116,5 +142,6 @@ export default {
     parsePostForm,
     writePost,
     getNumberOfPostByUser,
-    getPostByUser
+    getPostByUser,
+    getPostData
 };

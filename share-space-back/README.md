@@ -174,8 +174,43 @@ count : number
   "result": "number",
   "message": "string",
   "total": "number",
-  "list": "{id: number, text: string, image: string[]}[]"
+  "list": "number[]"
 }
+```
+
+* Result Code
+```
+101 : OK
+201 : Wrong range
+```
+
+#### GET /post
+
+Get post data.
+
+* Request Header
+```
+token : string
+```
+  
+* Request Param
+```
+id : number
+```
+  
+* Response JSON
+```json
+{
+  "result": "number",
+  "message": "string",
+  "data": "{text: string, image: string[]}"
+}
+```
+
+* Result Code
+```
+101 : OK
+201 : Post does not exist
 ```
 
 ## Configuration
