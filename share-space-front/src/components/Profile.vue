@@ -110,15 +110,19 @@
     .profile-container {
         flex: 1;
 
+        background-color: #F5F5F5;
+
         display: flex;
         flex-direction: row;
     }
 
     .info-container {
-        overflow: hidden;
         padding: 30px;
-        background-color: #E9E9E9;
+        background-color: #FAFAFA;
+
         text-align: center;
+
+        box-shadow: 0 5px 10px rgba(0,0,0,0.10), 0 10px 20px rgba(0,0,0,0.20);
     }
 
     .info-image {
@@ -126,8 +130,7 @@
         height: 300px;
         border-radius: 30px;
         margin-bottom: 30px;
-
-        background-color: mediumpurple;
+        background-color: black;
     }
 
     .post-container {

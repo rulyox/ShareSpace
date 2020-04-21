@@ -2,11 +2,11 @@
     <div class="post-container">
 
         <div class="post-header">
-            <img class="post-user">
+            <img class="post-user" src="../assets/logo.png">
             {{this.userName}}
         </div>
 
-        <img class="post-image">
+        <img class="post-image" src="../assets/logo.png">
 
         <div class="post-content">
             {{this.text}}
@@ -69,13 +69,20 @@
     .post-container {
         flex: 1;
 
-        width: 600px;
-        background-color: #E9E9E9;
+        width: 500px;
         border-radius: 10px;
-        margin-bottom: 30px;
+        margin-bottom: 50px;
+        background-color: #FAFAFA;
 
         display: flex;
         flex-direction: column;
+
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    }
+
+    .post-container:hover {
+        box-shadow: 0 5px 10px rgba(0,0,0,0.10), 0 10px 20px rgba(0,0,0,0.20);
     }
 
     .post-header {
@@ -91,15 +98,13 @@
         height: 40px;
         border-radius: 20px;
         margin-right: 15px;
-
-        background-color: mediumpurple;
+        background-color: black;
     }
 
     .post-image {
-        width: 600px;
-        height: 600px;
-
-        background-color: mediumpurple;
+        width: 500px;
+        height: 500px;
+        background-color: black;
     }
 
     .post-content {
