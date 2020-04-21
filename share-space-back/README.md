@@ -213,6 +213,26 @@ id : number
 201 : Post does not exist
 ```
 
+#### GET /post/image
+
+Get image file.
+
+Request Header
+```
+token : string
+```
+
+Request Param
+```
+post : number
+image: string
+```
+
+Response
+```
+image file
+```
+
 ## Configuration
 
 Save these JSON files in `/config`.
@@ -239,6 +259,6 @@ Save these JSON files in `/config`.
 ### data.json
 ```json
 {
-  "imagePath": "directory to save images"
+  "imageDir": "directory to save images"
 }
 ```

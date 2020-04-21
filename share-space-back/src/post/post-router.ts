@@ -1,7 +1,9 @@
 import express from 'express';
+import path from 'path';
 import postController from './post-controller';
 import userController from '../user/user-controller';
 import utility from '../utility';
+import dataConfig from '../../config/data.json';
 
 const router = express.Router();
 
@@ -200,6 +202,54 @@ router.get('/:id', async (request, response, next) => {
                 break;
 
         }
+
+    } catch(error) { next(error); }
+
+});
+
+/*
+GET /post/image
+
+Get image file.
+
+Request Header
+token : string
+
+Request Param
+post : number
+image: string
+
+Response
+image file
+*/
+router.get('/image/:post/:image', async (request, response, next) => {
+
+    const token = request.headers?.token;
+    const post = Number(request.params?.post);
+    const image = request.params?.image;
+
+    // type check
+    if(typeof token !== 'string' || isNaN(post) || typeof image !== 'string') {
+        response.status(400).end();
+        return;
+    }
+
+    try {
+
+        const tokenResult: {auth: boolean, id?: number, email?: string, name?: string} = await userController.checkToken(token);
+
+        // auth check
+        if(!tokenResult.auth) {
+            response.status(401).end();
+            return;
+        }
+
+        utility.print(`GET /post/image user: ${tokenResult.id} id: ${tokenResult.id} post: ${post} image: ${image}`);
+
+        const imageResult: boolean = await postController.checkImage(post, image);
+
+        if(imageResult) response.sendFile(path.join(__dirname, '../../../', dataConfig.imageDir, image));
+        else response.status(404).end();
 
     } catch(error) { next(error); }
 

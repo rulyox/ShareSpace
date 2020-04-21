@@ -1,5 +1,6 @@
 import express from 'express';
 import formidable from 'formidable';
+import path from 'path';
 import mysqlManager from '../mysql-manager';
 import postSQL from './post-sql';
 import utility from '../utility';
@@ -50,7 +51,7 @@ const writePost = (user: number, text: string, imageList: any[]): Promise<number
                 const imageName = `${postId}_${index}.png`;
 
                 // save image to png file
-                await utility.saveImage(originalPath, dataConfig.imagePath + imageName);
+                await utility.saveImage(originalPath, path.join(__dirname, '../../../', dataConfig.imageDir, imageName));
 
                 // add image to db
                 await mysqlManager.execute(postSQL.addImage(postId, imageName));
@@ -140,10 +141,27 @@ const getPostData = (id: number): Promise<{result: number, user?: number, name?:
     });
 };
 
+const checkImage = (post: number, image: string): Promise<boolean> => {
+    return new Promise(async (resolve, reject) => {
+
+        try {
+
+            // get data of a post
+            const imageQuery: {image: string}[] = (await mysqlManager.execute(postSQL.selectImageFile(post, image)));
+
+            if(imageQuery.length === 1) resolve(true);
+            else resolve(false);
+
+        } catch(error) { reject(error); }
+
+    });
+};
+
 export default {
     parsePostForm,
     writePost,
     getNumberOfPostByUser,
     getPostByUser,
-    getPostData
+    getPostData,
+    checkImage
 };

@@ -1,3 +1,4 @@
+import path from 'path';
 import crypto from 'crypto';
 import mysqlManager from '../mysql-manager';
 import userSQL from './user-sql';
@@ -134,7 +135,7 @@ const addProfileImage = (user: number, image: any): Promise<void> => {
             const imageName = `user_${user}.png`;
 
             // save image to png file
-            await utility.saveImage(originalPath, dataConfig.imagePath + imageName);
+            await utility.saveImage(originalPath, path.join(__dirname, '../../../', dataConfig.imageDir, imageName));
 
             // add image to db
             await mysqlManager.execute(userSQL.addProfileImage(user, imageName));

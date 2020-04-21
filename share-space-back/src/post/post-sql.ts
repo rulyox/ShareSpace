@@ -28,11 +28,17 @@ const selectPostImage = (post: number): string =>
     FROM post_image
     WHERE post = ${post};`;
 
+const selectImageFile = (post: number, image: string): string =>
+    `SELECT image
+    FROM post_image
+    WHERE post = ${post} AND image = "${image}";`;
+
 export default {
     add,
     addImage,
     selectNumberOfPostByUser,
     selectPostByUserInRange,
     selectPostData,
-    selectPostImage
+    selectPostImage,
+    selectImageFile
 };
