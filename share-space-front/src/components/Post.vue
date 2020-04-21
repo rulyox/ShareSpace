@@ -12,14 +12,6 @@
             {{this.text}}
         </div>
 
-        <div class="post-footer">
-            <el-button class="post-comment" type="primary" icon="el-icon-chat-line-square" circle />
-            <div>
-                <el-button type="success" icon="el-icon-edit" circle />
-                <el-button type="danger" icon="el-icon-delete" circle />
-            </div>
-        </div>
-
     </div>
 </template>
 
@@ -51,7 +43,9 @@
     }
 
     export default {
-        props: ['postId'],
+        props: {
+            postId: Number
+        },
 
         data() {
             return {
@@ -110,15 +104,5 @@
 
     .post-content {
         padding: 15px;
-    }
-
-    .post-footer {
-        padding-bottom: 15px;
-        padding-right: 15px;
-        padding-left: 15px;
-
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
     }
 </style>

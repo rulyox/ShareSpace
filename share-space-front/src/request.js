@@ -1,7 +1,7 @@
 import axios from 'axios';
 import config from './config.json';
 
-function getToken(email, pw) {
+const getToken = (email, pw) => {
     return new Promise((resolve, reject) => {
 
         axios.post(config.server + '/user/token',
@@ -20,9 +20,9 @@ function getToken(email, pw) {
             .catch((error) => reject(error));
 
     });
-}
+};
 
-function login(token) {
+const login = (token) => {
     return new Promise((resolve, reject) => {
 
         axios.get(config.server + '/user',
@@ -41,9 +41,9 @@ function login(token) {
             .catch((error) => { reject(error); });
 
     });
-}
+};
 
-function getProfile(profileId) {
+const getProfile = (profileId) => {
     return new Promise((resolve, reject) => {
 
         axios.get(config.server + '/user/data/' + profileId)
@@ -57,9 +57,9 @@ function getProfile(profileId) {
             .catch((error) => { reject(error); });
 
     });
-}
+};
 
-function writePost(token, text, imageList) {
+const writePost = (token, text, imageList) => {
     return new Promise((resolve, reject) => {
 
         const formData = new FormData();
@@ -80,9 +80,9 @@ function writePost(token, text, imageList) {
             .catch((error) => { reject(error); });
 
     });
-}
+};
 
-function getPostByUser(token, user, start) {
+const getPostByUser = (token, user, start) => {
     return new Promise((resolve, reject) => {
 
         axios.get(config.server + '/post/user/' + user + '?start=' + start + '&count=10',
@@ -101,9 +101,9 @@ function getPostByUser(token, user, start) {
             .catch((error) => { reject(error); });
 
     });
-}
+};
 
-function getPostData(token, id) {
+const getPostData = (token, id) => {
     return new Promise((resolve, reject) => {
 
         axios.get(config.server + '/post/' + id,
@@ -121,7 +121,7 @@ function getPostData(token, id) {
             .catch((error) => { reject(error); });
 
     });
-}
+};
 
 export default {
     getToken,

@@ -13,52 +13,7 @@
 <script>
     import Header from './Header';
 
-    // check token and get user info
-    async function getUserInfo() {
-
-        const token = localStorage.getItem('token');
-        if(token === undefined) await this.$router.push('/login'); // no token
-        else {
-
-            try {
-
-                const loginResult = await this.$request.login(token);
-
-                // save data to vuex
-                await this.$store.dispatch('initialize', {
-                    token: token,
-                    id: loginResult.id,
-                    email: loginResult.email,
-                    name: loginResult.name
-                });
-
-            } catch(error) {
-
-                console.log(error);
-
-                localStorage.removeItem('token');
-
-                // delete all data in vuex
-                await this.$store.dispatch('reset');
-
-                // go to login
-                await this.$router.push('/login')
-
-            }
-
-        }
-
-    }
-
     export default {
-        mounted() {
-            this.getUserInfo();
-        },
-
-        methods: {
-            getUserInfo
-        },
-
         components: {
             Header
         }

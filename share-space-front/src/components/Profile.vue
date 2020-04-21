@@ -54,9 +54,6 @@
 
             const token = this.$store.getters.token;
 
-            // check if token exists
-            if(token === null) return;
-
             const postResult = await this.$request.getPostByUser(token, this.profileId, 0);
 
             if(postResult.result === 101) { // OK
@@ -75,7 +72,9 @@
     }
 
     export default {
-        props: ['profileId'],
+        props: {
+            profileId: String
+        },
 
         data() {
             return {
@@ -86,18 +85,13 @@
             };
         },
 
-        computed: {
-            token() { return this.$store.getters.token; }
-        },
-
         mounted() {
             this.getProfileInfo();
             this.getPosts();
         },
 
         watch: {
-            profileId() { this.getProfileInfo(); },
-            token(value) { if(value !== null) this.getPosts(); }
+            profileId() { this.getProfileInfo(); }
         },
 
         methods: {
