@@ -1,6 +1,6 @@
 const add = (user: number, text: string): string =>
     `INSERT INTO post
-    VALUES (NULL, ${user}, "${text}");`;
+    VALUES (NULL, ${user}, "${text}", NULL);`;
 
 const addImage = (post: number, image: string): string =>
     `INSERT INTO post_image
@@ -33,6 +33,12 @@ const selectImageFile = (post: number, image: string): string =>
     FROM post_image
     WHERE post = ${post} AND image = "${image}";`;
 
+const selectFeedInRange = (user: number, start: number, count: number): string =>
+    `SELECT author, post
+    FROM feed
+    WHERE user = ${user}
+    LIMIT ${start}, ${count};`;
+
 export default {
     add,
     addImage,
@@ -40,5 +46,6 @@ export default {
     selectPostByUserInRange,
     selectPostData,
     selectPostImage,
-    selectImageFile
+    selectImageFile,
+    selectFeedInRange
 };

@@ -184,7 +184,7 @@ count : number
 201 : Wrong range
 ```
 
-#### GET /post
+#### GET /post/data
 
 Get post data.
 
@@ -231,6 +231,31 @@ image: string
 Response
 ```
 image file
+```
+
+#### GET /post/feed
+
+Get feed.
+
+* Request Header
+```
+token : string
+```
+
+* Request Query
+```
+start : number (starts from 0)
+count : number
+```
+
+* Response JSON
+```json
+[
+  {
+    "author": "number",
+    "post": "string"
+  }
+]
 ```
 
 ## Configuration

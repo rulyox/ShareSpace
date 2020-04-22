@@ -135,7 +135,7 @@ router.get('/user/:user', async (request, response, next) => {
 });
 
 /*
-GET /post
+GET /post/data
 
 Get post data.
 
@@ -152,7 +152,7 @@ Result Code
 101 : OK
 201 : Post does not exist
 */
-router.get('/:id', async (request, response, next) => {
+router.get('/data/:id', async (request, response, next) => {
 
     const token = request.headers?.token;
     const id = Number(request.params?.id);
@@ -250,6 +250,53 @@ router.get('/image/:post/:image', async (request, response, next) => {
 
         if(imageResult) response.sendFile(path.join(__dirname, '../../../', dataConfig.imageDir, image));
         else response.status(404).end();
+
+    } catch(error) { next(error); }
+
+});
+
+/*
+GET /post/feed
+
+Get feed.
+
+Request Header
+token : string
+
+Request Query
+start : number (starts from 0)
+count : number
+
+Response JSON
+{author: number, post: number}[]
+*/
+router.get('/feed', async (request, response, next) => {
+
+    const token = request.headers?.token;
+    const start = Number(request.query?.start);
+    const count = Number(request.query?.count);
+
+    // type check
+    if(typeof token !== 'string' || isNaN(start) || isNaN(count)) {
+        response.status(400).end();
+        return;
+    }
+
+    try {
+
+        const tokenResult: {auth: boolean, id?: number, email?: string, name?: string} = await userController.checkToken(token);
+
+        // auth check
+        if(!tokenResult.auth) {
+            response.status(401).end();
+            return;
+        }
+
+        utility.print(`GET /post/feed user: ${tokenResult.id}`);
+
+        const feedData = await postController.getFeed(tokenResult.id!, start, count);
+
+        response.json(feedData);
 
     } catch(error) { next(error); }
 

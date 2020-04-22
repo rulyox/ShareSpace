@@ -157,11 +157,26 @@ const checkImage = (post: number, image: string): Promise<boolean> => {
     });
 };
 
+const getFeed = (user: number, start: number, count: number): Promise<{author: number, post: number}> => {
+    return new Promise(async (resolve, reject) => {
+
+        try {
+
+            const feedQuery: {author: number, post: number} = await mysqlManager.execute(postSQL.selectFeedInRange(user, start, count));
+
+            resolve(feedQuery);
+
+        } catch(error) { reject(error); }
+
+    });
+};
+
 export default {
     parsePostForm,
     writePost,
     getNumberOfPostByUser,
     getPostByUser,
     getPostData,
-    checkImage
+    checkImage,
+    getFeed
 };
