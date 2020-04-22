@@ -1,12 +1,12 @@
 <template>
-    <div class="post-container">
+    <div class="post-container" v-bind:id="'post-' + postId">
 
         <div class="post-header">
             <img class="post-user" src="../assets/logo.png">
             {{this.userName}}
         </div>
 
-        <img class="post-image" src="../assets/logo.png">
+        <img class="post-image" v-bind:src="image[0]">
 
         <div class="post-content">
             {{this.text}}
@@ -17,6 +17,11 @@
 
 <script>
     async function getPostData(postId) {
+
+        const thisElement = document.getElementById('post-' + postId);
+
+        // hide element
+        thisElement.style.display = 'none';
 
         try {
 
@@ -30,7 +35,28 @@
 
                 this.userName = postData.name;
                 this.text = postData.text;
-                this.image = postData.image;
+
+                // show element
+                thisElement.style.display = 'block';
+
+                const imageList = postData.image;
+
+                // save base64 image to list
+                for(let i = 0; i < imageList.length; i++) {
+
+                    const image = await this.$request.getImageFile(token, postId, imageList[i]);
+
+                    if(image instanceof ArrayBuffer) {
+
+                        const imageBase64 = Buffer.from(image).toString('base64');
+                        this.image.push('data:image/png;base64, ' + imageBase64);
+
+                    }
+
+                }
+
+                // show image
+                if(this.image.length > 0) thisElement.getElementsByClassName('post-image')[0].style.display = 'block';
 
             }
 
@@ -105,6 +131,8 @@
         width: 500px;
         height: 500px;
         background-color: black;
+
+        display: none;
     }
 
     .post-content {

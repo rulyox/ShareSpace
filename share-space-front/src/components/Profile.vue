@@ -9,7 +9,7 @@
 
         </div>
 
-        <div class="post-container">
+        <div class="post-list-container">
 
             <div class="post-list">
 
@@ -133,7 +133,7 @@
         background-color: black;
     }
 
-    .post-container {
+    .post-list-container {
         flex: 1;
         overflow: auto;
     }

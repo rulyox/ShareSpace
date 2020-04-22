@@ -123,11 +123,26 @@ const getPostData = (token, id) => {
     });
 };
 
+const getImageFile = (token, post, image) => {
+    return new Promise((resolve, reject) => {
+
+        axios.get(config.server + '/post/image/' + post + '/' + image,
+            {
+                responseType: 'arraybuffer',
+                headers: {token: token}
+            })
+            .then((response) => { resolve(response.data); })
+            .catch((error) => { reject(error); });
+
+    });
+};
+
 export default {
     getToken,
     login,
     getProfile,
     writePost,
     getPostByUser,
-    getPostData
+    getPostData,
+    getImageFile
 };
