@@ -5,7 +5,7 @@
 
         <el-dropdown id="header-profile" trigger="click">
 
-            <img class="el-dropdown-link" width="50px" height="50px" style="background-color: mediumpurple; border-radius: 25px;"/>
+            <img class="el-dropdown-link" id="header-profile-image">
 
             <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item icon="el-icon-user-solid" v-on:click.native="clickProfile">My Profile</el-dropdown-item>
@@ -48,10 +48,13 @@
         width: 100%;
         height: 70px;
         background-color: #253B80;
+        z-index: 1;
 
         display: flex;
         flex-direction: row;
         align-items: center;
+
+        box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
     }
 
     #header-title {
@@ -72,5 +75,12 @@
 
         margin-left: auto;
         margin-right: 30px;
+    }
+
+    #header-profile-image {
+        width: 50px;
+        height: 50px;
+        background-color: black;
+        border-radius: 25px;
     }
 </style>

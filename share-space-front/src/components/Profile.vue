@@ -19,7 +19,7 @@
 
         </div>
 
-        <a class="float" v-on:click="showModal = true">+</a>
+        <a class="add-button" v-on:click="showModal = true"><i class="el-icon-plus"></i></a>
 
         <WriteModal v-if="showModal" v-on:close="showModal = false" />
 
@@ -122,7 +122,7 @@
 
         text-align: center;
 
-        box-shadow: 0 5px 10px rgba(0,0,0,0.10), 0 10px 20px rgba(0,0,0,0.20);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
     }
 
     .info-image {
@@ -146,16 +146,28 @@
         align-items: center;
     }
 
-    .float{
+    .add-button {
         position: fixed;
+
         width: 60px;
         height: 60px;
+        border-radius: 50%;
+
         bottom: 40px;
         right: 40px;
+
         background-color: #253B80;
-        color: #FFF;
-        border-radius: 30px;
-        text-align: center;
-        box-shadow: 2px 2px 3px #999;
+        color: #FAFAFA;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    }
+
+    .add-button:hover {
+        box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
     }
 </style>
