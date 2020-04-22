@@ -106,7 +106,7 @@ const getPostByUser = (token, user, start) => {
 const getPostData = (token, id) => {
     return new Promise((resolve, reject) => {
 
-        axios.get(config.server + '/post/' + id,
+        axios.get(config.server + '/post/data/' + id,
             {
                 headers: {token: token}
             })
@@ -137,6 +137,23 @@ const getImageFile = (token, post, image) => {
     });
 };
 
+const getFeed = (token, start) => {
+    return new Promise((resolve, reject) => {
+
+        axios.get(config.server + '/post/feed?start=' + start + '&count=10',
+            {
+                headers: {token: token}
+            })
+            .then((response) => {
+
+                resolve(response.data);
+
+            })
+            .catch((error) => { reject(error); });
+
+    });
+};
+
 export default {
     getToken,
     login,
@@ -144,5 +161,6 @@ export default {
     writePost,
     getPostByUser,
     getPostData,
-    getImageFile
+    getImageFile,
+    getFeed
 };
