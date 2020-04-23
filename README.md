@@ -4,6 +4,7 @@
 
 Project making a simple full stack SNS.
 
-## Deployment
+## Project Repositories
 
-Place nginx.conf in `/etc/nginx/conf.d/`.
+* [Back-end Server](https://github.com/rulyox/ShareSpace-Back)
+* [Front-end Server](https://github.com/rulyox/ShareSpace-Front)
