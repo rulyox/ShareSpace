@@ -1,10 +1,10 @@
-## Web API
+# Web API
 
 Uses REST API.
 
-### /user
+## /user
 
-#### POST /user/token
+### POST /user/token
 
 Check login and create token.
 
@@ -31,7 +31,7 @@ Check login and create token.
 201 : Wrong email or password
 ```
 
-#### GET /user
+### GET /user
 
 Login.
 
@@ -49,7 +49,7 @@ token : string
 }
 ```
 
-#### POST /user
+### POST /user
 
 Sign up.
 
@@ -76,7 +76,7 @@ Sign up.
 201 : Email exists
 ```
 
-#### POST /user/image
+### POST /user/image
 
 Add profile image.
 
@@ -97,7 +97,7 @@ files
 }
 ```
 
-#### GET /user/data/:id
+### GET /user/data/:id
 
 Get user data.
 
@@ -113,9 +113,9 @@ id : number
 }
 ```
 
-### /post
+## /post
 
-#### POST /post
+### POST /post
 
 Write new post.
 
@@ -137,7 +137,7 @@ files
 }
 ```
 
-#### GET /post/user/:user
+### GET /post/user/:user
 
 Get post list by user.
 
@@ -173,7 +173,7 @@ count : number
 201 : Wrong range
 ```
 
-#### GET /post/data/:id
+### GET /post/data/:id
 
 Get post data.
 
@@ -202,7 +202,7 @@ id : number
 201 : Post does not exist
 ```
 
-#### GET /post/image/:post/:image
+### GET /post/image/:post/:image
 
 Get image file.
 
@@ -222,7 +222,7 @@ Response
 image file
 ```
 
-#### GET /post/feed
+### GET /post/feed
 
 Get feed.
 
