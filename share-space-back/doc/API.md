@@ -137,7 +137,7 @@ files
 }
 ```
 
-### GET /post/user/:user
+### GET /post/user/:id
 
 Get post list by user.
 
@@ -148,7 +148,7 @@ token : string
 
 * Request Param
 ```
-user : number
+id : number
 ```
 
 * Request Query

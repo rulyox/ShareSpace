@@ -2,7 +2,6 @@ import express from 'express';
 import path from 'path';
 import postUtility from './post-utility';
 import postController from './post-controller';
-import userController from '../user/user-controller';
 import utility from '../utility';
 import dataConfig from '../../config/data.json';
 
@@ -23,28 +22,18 @@ Response JSON
 */
 const post = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
 
-    const token = request.headers?.token;
+    const user = response.locals.user;
     const formData: {text: string, images: object[]} = await postUtility.parseForm(request);
 
-    // type check
-    if(typeof token !== 'string') {
-        response.status(400).end();
+    // auth check
+    if(user === null) {
+        response.status(401).end();
         return;
     }
 
+    utility.print(`POST /post user: ${user} file: ${formData.images.length}`);
+
     try {
-
-        const tokenResult: {auth: boolean, id?: number, email?: string, name?: string} = await userController.checkToken(token);
-
-        // auth check
-        if(!tokenResult.auth) {
-            response.status(401).end();
-            return;
-        }
-
-        utility.print(`POST /post user: ${tokenResult.id} file: ${formData.images.length}`);
-
-        const user = tokenResult.id!;
 
         const postId: number = await postController.writePost(user, formData.text, formData.images);
 
@@ -57,7 +46,7 @@ const post = async (request: express.Request, response: express.Response, next: 
 };
 
 /*
-GET /post/user/:user
+GET /post/user/:id
 
 Get post list by user.
 
@@ -65,7 +54,7 @@ Request Header
 token : string
 
 Request Param
-user : number
+id : number
 
 Request Query
 start : number (starts from 0)
@@ -80,37 +69,35 @@ Result Code
 */
 const getUser = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
 
-    const token = request.headers?.token;
-    const user = Number(request.params?.user);
-    const start = Number(request.query?.start);
-    const count = Number(request.query?.count);
+    const user = response.locals.user;
+    const id = Number(request.params.id);
+    const start = Number(request.query.start);
+    const count = Number(request.query.count);
 
     // type check
-    if(typeof token !== 'string' || isNaN(user) || isNaN(start) || isNaN(count)) {
+    if(isNaN(id) || isNaN(start) || isNaN(count)) {
         response.status(400).end();
         return;
     }
 
+    // auth check
+    if(user === null) {
+        response.status(401).end();
+        return;
+    }
+
+    utility.print(`GET /post/user user: ${user} start: ${start} count: ${count}`);
+
     try {
 
-        const tokenResult: {auth: boolean, id?: number, email?: string, name?: string} = await userController.checkToken(token);
-
-        // auth check
-        if(!tokenResult.auth) {
-            response.status(401).end();
-            return;
-        }
-
-        utility.print(`GET /post/user user: ${tokenResult.id} start: ${start} count: ${count}`);
-
         // get number of posts by user
-        const postCount = await postController.getNumberOfPostByUser(user);
+        const postCount = await postController.getNumberOfPostByUser(id);
 
         // start should be 0 from postCount-1
         if(start >= 0 && start < postCount) {
 
             // get post list by user
-            const postList: number[] = await postController.getPostByUser(user, start, count);
+            const postList: number[] = await postController.getPostByUser(id, start, count);
 
             response.json({
                 result: 101,
@@ -153,26 +140,24 @@ Result Code
 */
 const getData = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
 
-    const token = request.headers?.token;
-    const id = Number(request.params?.id);
+    const user = response.locals.user;
+    const id = Number(request.params.id);
 
     // type check
-    if(typeof token !== 'string' || isNaN(id)) {
+    if(isNaN(id)) {
         response.status(400).end();
         return;
     }
 
+    // auth check
+    if(user === null) {
+        response.status(401).end();
+        return;
+    }
+
+    utility.print(`GET /post user: ${user} id: ${id}`);
+
     try {
-
-        const tokenResult: {auth: boolean, id?: number, email?: string, name?: string} = await userController.checkToken(token);
-
-        // auth check
-        if(!tokenResult.auth) {
-            response.status(401).end();
-            return;
-        }
-
-        utility.print(`GET /post user: ${tokenResult.id} id: ${id}`);
 
         const postData: {result: number, user?: number, name?: string, text?: string, image?: string[]} = await postController.getPostData(id);
 
@@ -223,27 +208,25 @@ image file
 */
 const getImage = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
 
-    const token = request.headers?.token;
-    const post = Number(request.params?.post);
-    const image = request.params?.image;
+    const user = response.locals.user;
+    const post = Number(request.params.post);
+    const image = request.params.image; // always string
 
     // type check
-    if(typeof token !== 'string' || isNaN(post) || typeof image !== 'string') {
+    if(isNaN(post)) {
         response.status(400).end();
         return;
     }
 
+    // auth check
+    if(user === null) {
+        response.status(401).end();
+        return;
+    }
+
+    utility.print(`GET /post/image user: ${user} post: ${post} image: ${image}`);
+
     try {
-
-        const tokenResult: {auth: boolean, id?: number, email?: string, name?: string} = await userController.checkToken(token);
-
-        // auth check
-        if(!tokenResult.auth) {
-            response.status(401).end();
-            return;
-        }
-
-        utility.print(`GET /post/image user: ${tokenResult.id} id: ${tokenResult.id} post: ${post} image: ${image}`);
 
         const imageResult: boolean = await postController.checkImage(post, image);
 
@@ -271,29 +254,27 @@ Response JSON
 */
 const getFeed = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
 
-    const token = request.headers?.token;
-    const start = Number(request.query?.start);
-    const count = Number(request.query?.count);
+    const user = response.locals.user;
+    const start = Number(request.query.start);
+    const count = Number(request.query.count);
 
     // type check
-    if(typeof token !== 'string' || isNaN(start) || isNaN(count)) {
+    if(isNaN(start) || isNaN(count)) {
         response.status(400).end();
         return;
     }
 
+    // auth check
+    if(user === null) {
+        response.status(401).end();
+        return;
+    }
+
+    utility.print(`GET /post/feed user: ${user}`);
+
     try {
 
-        const tokenResult: {auth: boolean, id?: number, email?: string, name?: string} = await userController.checkToken(token);
-
-        // auth check
-        if(!tokenResult.auth) {
-            response.status(401).end();
-            return;
-        }
-
-        utility.print(`GET /post/feed user: ${tokenResult.id}`);
-
-        const feedData = await postController.getFeed(tokenResult.id!, start, count);
+        const feedData = await postController.getFeed(user, start, count);
 
         response.json(feedData);
 

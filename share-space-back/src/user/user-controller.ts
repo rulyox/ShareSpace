@@ -135,7 +135,7 @@ const addProfileImage = (user: number, image: any): Promise<void> => {
     });
 };
 
-const getUserData = (id: number): Promise<{result: boolean, name?: string}> => {
+const getUserData = (id: number): Promise<{result: boolean, email?: string, name?: string}> => {
     return new Promise(async (resolve, reject) => {
 
         try {
@@ -152,6 +152,7 @@ const getUserData = (id: number): Promise<{result: boolean, name?: string}> => {
 
                 resolve({
                     result: true,
+                    email: userData?.email,
                     name: userData?.name
                 });
 

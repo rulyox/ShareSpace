@@ -20,8 +20,8 @@ Result Code
 */
 const postToken = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
 
-    const email = request.body?.email;
-    const pw = request.body?.pw;
+    const email = request.body.email;
+    const pw = request.body.pw;
 
     // type check
     if(typeof email !== 'string' || typeof pw !== 'string') {
@@ -75,30 +75,24 @@ Response JSON
 */
 const get = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
 
-    const token = request.headers?.token;
+    const user = response.locals.user;
 
-    // type check
-    if(typeof token !== 'string') {
-        response.status(400).end();
+    // auth check
+    if(user === null) {
+        response.status(401).end();
         return;
     }
 
+    utility.print(`GET /user user: ${user}`);
+
     try {
 
-        const tokenResult: {auth: boolean, id?: number, email?: string, name?: string} = await userController.checkToken(token);
-
-        // auth check
-        if(!tokenResult.auth) {
-            response.status(401).end();
-            return;
-        }
-
-        utility.print(`GET /user user: ${tokenResult.id}`);
+        const userDataResult: {result: boolean, email? :string, name?: string} = await userController.getUserData(user);
 
         response.json({
-            id: tokenResult.id!,
-            email: tokenResult.email!,
-            name: tokenResult.name!
+            id: user,
+            email: userDataResult.email!,
+            name: userDataResult.name!
         });
 
     } catch(error) { next(error); }
@@ -122,9 +116,9 @@ Result Code
 */
 const post = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
 
-    const email = request.body?.email;
-    const pw = request.body?.pw;
-    const name = request.body?.name;
+    const email = request.body.email;
+    const pw = request.body.pw;
+    const name = request.body.name;
 
     // type check
     if(typeof email !== 'string' || typeof pw !== 'string' || typeof name !== 'string') {
@@ -167,28 +161,19 @@ Response JSON
 */
 const postImage = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
 
-    const token = request.headers?.token;
+    const user = response.locals.user;
     const formData: {image: object} = await userController.parseProfileForm(request);
 
-    // type check
-    if(typeof token !== 'string') {
-        response.status(400).end();
+    // auth check
+    if(user === null) {
+        response.status(401).end();
         return;
     }
 
+    utility.print(`POST /user/image user: ${user}`);
+
     try {
 
-        const tokenResult: {auth: boolean, id?: number, email?: string, name?: string} = await userController.checkToken(token);
-
-        // auth check
-        if(!tokenResult.auth) {
-            response.status(401).end();
-            return;
-        }
-
-        utility.print(`POST /user/image user: ${tokenResult.id}`);
-
-        const user = tokenResult.id!;
         await userController.addProfileImage(user, formData.image);
 
         response.json({ 'result': true });
@@ -210,7 +195,7 @@ Response JSON
 */
 const getData = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
 
-    const id = Number(request.params?.id);
+    const id = Number(request.params.id);
 
     // type check
     if(isNaN(id)) {
@@ -222,7 +207,7 @@ const getData = async (request: express.Request, response: express.Response, nex
 
     try {
 
-        const userDataResult: {result: boolean, name?: string} = await userController.getUserData(id);
+        const userDataResult: {result: boolean, email? :string, name?: string} = await userController.getUserData(id);
 
         // user exist check
         if(!userDataResult.result) {

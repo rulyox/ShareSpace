@@ -14,6 +14,7 @@ const port = serverConfig.port;
 
 // middleware
 app.use(bodyParser.json());
+app.use(utility.authChecker);
 
 // route
 app.use('/api', api);
