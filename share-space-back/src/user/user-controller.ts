@@ -1,8 +1,7 @@
 import path from 'path';
-import crypto from 'crypto';
+import userUtility from './user-utility';
 import mysqlManager from '../mysql-manager';
 import userSQL from './user-sql';
-import serverConfig from '../../config/server.json';
 import express from 'express';
 import formidable from 'formidable';
 import utility from '../utility';
@@ -28,24 +27,13 @@ const checkLogin = (email: string, pw: string): Promise<number> => {
     });
 };
 
-const createToken = (email: string, pw: string): string => {
-
-    const credential = {
-        email: email,
-        pw: pw
-    };
-
-    return encryptAES(JSON.stringify(credential));
-
-};
-
 const checkToken = (token: string): Promise<{auth: boolean, id?: number, email?: string, name?: string}> => {
     return new Promise(async (resolve, reject) => {
 
         try {
 
             // get credential from token
-            let credential = JSON.parse(decryptAES(token));
+            let credential = JSON.parse(userUtility.decryptAES(token));
 
             // type check
             const email = credential?.email;
@@ -174,34 +162,8 @@ const getUserData = (id: number): Promise<{result: boolean, name?: string}> => {
     });
 };
 
-const encryptAES = (plainText: string): string => {
-
-    const iv = crypto.randomBytes(16);
-
-    const cipher = crypto.createCipheriv('aes-256-cbc', serverConfig.aes, iv);
-    let encryptedText = cipher.update(plainText);
-    encryptedText = Buffer.concat([encryptedText, cipher.final()]);
-
-    return iv.toString('hex') + encryptedText.toString('hex');
-
-};
-
-const decryptAES = (cipherText: string): string => {
-
-    const iv = Buffer.from(cipherText.substring(0, 32), 'hex');
-    const encryptedText = Buffer.from(cipherText.substring(32), 'hex');
-
-    const decipher = crypto.createDecipheriv('aes-256-cbc', serverConfig.aes, iv);
-    let decryptedText = decipher.update(encryptedText);
-    decryptedText = Buffer.concat([decryptedText, decipher.final()]);
-
-    return decryptedText.toString();
-
-};
-
 export default {
     checkLogin,
-    createToken,
     checkToken,
     createUser,
     parseProfileForm,

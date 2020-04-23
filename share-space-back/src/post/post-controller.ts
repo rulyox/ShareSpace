@@ -1,40 +1,8 @@
-import express from 'express';
-import formidable from 'formidable';
 import path from 'path';
 import mysqlManager from '../mysql-manager';
 import postSQL from './post-sql';
 import utility from '../utility';
 import dataConfig from '../../config/data.json';
-
-const parsePostForm = (request: express.Request): Promise<{text: string, images: object[]}> => {
-    return new Promise(async (resolve, reject) => {
-
-        try {
-
-            const formParser = new formidable.IncomingForm();
-            formParser.parse(request, function (error, fields, files) {
-
-                if(error) {
-                    reject(error);
-                    return
-                }
-
-                if(typeof fields.text !== 'string') {
-                    reject('FormData text is not string');
-                    return;
-                }
-
-                resolve({
-                    text: fields.text,
-                    images: Object.values(files)
-                });
-
-            });
-
-        } catch(error) { reject(error); }
-
-    });
-};
 
 const writePost = (user: number, text: string, imageList: any[]): Promise<number> => {
     return new Promise(async (resolve, reject) => {
@@ -172,7 +140,6 @@ const getFeed = (user: number, start: number, count: number): Promise<{author: n
 };
 
 export default {
-    parsePostForm,
     writePost,
     getNumberOfPostByUser,
     getPostByUser,
