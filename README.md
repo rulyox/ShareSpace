@@ -12,6 +12,10 @@ Project making a simple full stack SNS.
 
 ## Screenshots
 
+### Post Modal in Feed Screen
+
 ![screenshot](./img/screenshot_1.png)
+
+### Profile Screen
 
 ![screenshot](./img/screenshot_2.png)
